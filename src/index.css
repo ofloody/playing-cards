@@ -15,15 +15,166 @@
 }
 
 html, body, #root { height: 100%; }
+html { scroll-behavior: smooth; }
 body {
   margin: 0;
   background: var(--color-felt-900);
   color: var(--color-cream);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-/* Felt table backdrop with vignette + subtle grain */
+/* Atmospheric backdrop: a warm brass bloom over deepening felt, plus film grain. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(80% 55% at 50% -8%, rgba(200, 162, 74, 0.16) 0%, transparent 60%),
+    radial-gradient(120% 80% at 50% 0%, var(--color-felt-700) 0%, var(--color-felt-900) 55%),
+    var(--color-felt-900);
+}
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+::selection { background: var(--color-brass); color: var(--color-ink); }
+
+/* ---- Motion vocabulary ---- */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes dealIn {
+  from { opacity: 0; transform: translateY(46px) scale(0.92); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-9px); }
+}
+.reveal { opacity: 0; animation: fadeUp 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+
+/* ---- Art-deco hairline rule with a centred suit lozenge ---- */
+.deco-rule {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  color: var(--color-brass);
+}
+.deco-rule::before,
+.deco-rule::after {
+  content: "";
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--color-brass) 60%, transparent), transparent);
+}
+.deco-rule span { font-size: 0.7rem; letter-spacing: 0.2em; }
+
+/* ---- Decorative corner brackets (deco frame) ---- */
+.deco-corners { position: relative; }
+.deco-corners::before,
+.deco-corners::after {
+  content: "";
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border: 1px solid color-mix(in srgb, var(--color-brass) 55%, transparent);
+  pointer-events: none;
+}
+.deco-corners::before { top: -10px; left: -10px; border-right: 0; border-bottom: 0; }
+.deco-corners::after { bottom: -10px; right: -10px; border-left: 0; border-top: 0; }
+
+/* ---- The hero's fanned hand ---- */
+.fan { position: relative; }
+.fan-slot {
+  position: absolute;
+  top: 0; left: 50%;
+  transform-origin: 50% 130%;
+  will-change: transform;
+}
+.fan-card {
+  width: 100%;
+  aspect-ratio: 5 / 7;
+  border-radius: 0.6rem;
+  background: var(--color-cream);
+  box-shadow: 0 18px 34px -16px rgba(0, 0, 0, 0.7), inset 0 0 0 1px rgba(20, 17, 13, 0.12);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0.6rem 0.7rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  opacity: 0;
+  animation: dealIn 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.fan-card .pip-c { align-self: center; }
+.fan-card .pip-b { align-self: flex-end; transform: rotate(180deg); }
+
+/* ---- Game index cards (home grid) ---- */
+.game-grid { perspective: 1200px; }
+.game-card {
+  position: relative;
+  transform-style: preserve-3d;
+  transition:
+    transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1),
+    border-color 0.3s,
+    box-shadow 0.45s;
+  overflow: hidden;
+}
+.game-card::after {
+  /* faint engraved suit watermark */
+  content: attr(data-suit);
+  position: absolute;
+  right: -0.4rem;
+  bottom: -1.6rem;
+  font-size: 8rem;
+  line-height: 1;
+  color: color-mix(in srgb, var(--color-brass) 14%, transparent);
+  pointer-events: none;
+  transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.game-card:hover {
+  transform: translateY(-8px) rotateX(5deg) rotateY(-4deg);
+  box-shadow: 0 34px 60px -28px rgba(0, 0, 0, 0.85);
+}
+.game-card:hover::after { transform: translateY(-8px) rotate(-8deg); }
+.card-index {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 0.9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ---- Game-page progress rail ---- */
+.rail-node {
+  position: relative;
+  width: 11px;
+  height: 11px;
+  transform: rotate(45deg);
+  border: 1px solid color-mix(in srgb, var(--color-brass) 45%, transparent);
+  background: transparent;
+  transition: all 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+  cursor: pointer;
+}
+.rail-node.is-active {
+  background: var(--color-brass);
+  box-shadow: 0 0 14px 2px rgba(200, 162, 74, 0.6);
+  transform: rotate(45deg) scale(1.45);
+}
+.rail-node.is-done { background: color-mix(in srgb, var(--color-brass) 50%, transparent); }
+
+/* ===== Felt table (game page) ===== */
 .table-felt {
   position: relative;
   width: 100%;
@@ -32,6 +183,16 @@ body {
   background:
     radial-gradient(120% 90% at 50% 35%, var(--color-felt-500) 0%, var(--color-felt-700) 45%, var(--color-felt-900) 100%);
   box-shadow: inset 0 0 120px rgba(0,0,0,0.55), 0 30px 60px -30px rgba(0,0,0,0.8);
+}
+.table-felt::before {
+  /* inner brass keyline, like the border of a card table */
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border-radius: 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--color-brass) 22%, transparent);
+  pointer-events: none;
+  z-index: 1;
 }
 .table-felt::after {
   content: "";
@@ -69,5 +230,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
   * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  .fan-card, .reveal { opacity: 1 !important; }
 }
