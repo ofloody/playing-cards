@@ -4,6 +4,8 @@ import { gameMap } from '../games';
 import { runGame } from '../engine/runGame';
 import { CardTable } from '../engine/CardTable';
 import { useActiveStep } from '../engine/useActiveStep';
+import { useIsMobile } from '../engine/useIsMobile';
+import { MobileGameView } from './MobileGameView';
 
 function scrollToStep(i: number) {
   const el = document.querySelector(`[data-index="${i}"]`);
@@ -15,6 +17,7 @@ export default function GamePage() {
   const game = id ? gameMap[id] : undefined;
   const snapshots = useMemo(() => (game ? runGame(game) : []), [game]);
   const { active, register } = useActiveStep(snapshots.length);
+  const isMobile = useIsMobile();
 
   // Open each game at the top — route changes don't reset scroll on their own.
   useEffect(() => {
@@ -30,6 +33,12 @@ export default function GamePage() {
         </Link>
       </main>
     );
+  }
+
+  // On a phone-sized screen, swap the scroll-reveal walkthrough for a tap-driven
+  // one: animation on top, directions on the bottom, looping back at the end.
+  if (isMobile) {
+    return <MobileGameView game={game} snapshots={snapshots} />;
   }
 
   const snap = snapshots[Math.min(active, snapshots.length - 1)];
