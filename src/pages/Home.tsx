@@ -30,7 +30,7 @@ function MiniCard({ rank, suit }: { rank: string; suit: keyof typeof GLYPH }) {
   );
 }
 
-// Deterministic suit motif per game, for the engraved watermark + index mark.
+// Deterministic suit motif per game, for the watermark + index mark.
 function suitFor(id: string): keyof typeof GLYPH {
   const suits: (keyof typeof GLYPH)[] = ['S', 'H', 'D', 'C'];
   let h = 0;
@@ -44,19 +44,19 @@ export default function Home() {
       {/* Hero */}
       <section className="grid items-center gap-10 md:grid-cols-[1.05fr_0.95fr] md:gap-8">
         <div>
-          <p className="reveal font-body uppercase tracking-[0.4em] text-brass-soft/80 text-xs mb-5">
+          <p className="reveal font-body uppercase tracking-[0.4em] text-accent text-xs mb-5">
             A Field Guide to the Table
           </p>
           <h1
-            className="reveal font-display text-6xl md:text-8xl font-black leading-[0.86] text-cream"
+            className="reveal font-display text-6xl md:text-8xl font-black leading-[0.86] text-ink"
             style={{ animationDelay: '0.08s' }}
           >
             Card<br />
-            <span className="text-brass-soft">Games</span><br />
+            <span className="text-accent">Games</span><br />
             Handbook
           </h1>
           <p
-            className="reveal font-body text-cream/70 text-lg mt-7 max-w-md leading-relaxed"
+            className="reveal font-body text-ink-soft text-lg mt-7 max-w-md leading-relaxed"
             style={{ animationDelay: '0.16s' }}
           >
             Not a wall of rules — a hand played out in front of you. Scroll any
@@ -93,7 +93,6 @@ export default function Home() {
                 </div>
               );
             })}
-            {/* card-shaped delay carrier: stagger the deal */}
             <style>{`
               .fan-slot:nth-child(1) .fan-card { animation-delay: .35s; }
               .fan-slot:nth-child(2) .fan-card { animation-delay: .45s; }
@@ -108,12 +107,12 @@ export default function Home() {
       {/* Games */}
       <section className="mt-24 md:mt-32">
         <div className="reveal deco-rule mb-10" style={{ animationDelay: '0.1s' }}>
-          <span className="font-display not-italic text-cream/90 text-sm tracking-[0.25em]">
+          <span className="font-display not-italic text-ink text-sm tracking-[0.25em]">
             THE&nbsp;GAMES
           </span>
         </div>
 
-        <ul className="game-grid grid gap-6 sm:grid-cols-2">
+        <ul className="grid gap-6 sm:grid-cols-2">
           {games.map((g, i) => {
             const suit = suitFor(g.id);
             const isRed = RED.has(suit);
@@ -126,28 +125,28 @@ export default function Home() {
                 <Link
                   to={`/game/${g.id}`}
                   data-suit={GLYPH[suit]}
-                  className="game-card group block rounded-2xl border border-brass/25 bg-felt-700/30 p-7 hover:border-brass/70"
-                  style={{ borderLeft: `3px solid ${g.accent ?? 'var(--color-brass)'}` }}
+                  className="game-card group block rounded-2xl border border-line p-7 hover:border-accent/60"
+                  style={{ borderLeft: `3px solid ${g.accent ?? 'var(--color-accent)'}` }}
                 >
                   <div className="flex items-start justify-between gap-4">
-                    <h2 className="font-display text-4xl font-semibold text-cream group-hover:text-brass-soft transition-colors">
+                    <h2 className="font-display text-4xl font-semibold text-ink group-hover:text-accent transition-colors">
                       {g.title}
                     </h2>
                     <span
                       className="card-index text-xl shrink-0"
-                      style={{ color: isRed ? 'var(--color-suit-red)' : 'var(--color-brass-soft)' }}
+                      style={{ color: isRed ? 'var(--color-suit-red)' : 'var(--color-accent)' }}
                     >
                       <span>{g.title[0]}</span>
                       <span>{GLYPH[suit]}</span>
                     </span>
                   </div>
-                  <p className="relative z-10 font-body text-cream/70 mt-3 max-w-sm">{g.blurb}</p>
-                  <div className="relative z-10 mt-6 flex gap-5 text-xs uppercase tracking-wider text-cream/45">
+                  <p className="relative z-10 font-body text-ink-soft mt-3 max-w-sm">{g.blurb}</p>
+                  <div className="relative z-10 mt-6 flex gap-5 text-xs uppercase tracking-wider text-ink-soft">
                     <span>{g.players} players</span>
                     <span>{g.playTime}</span>
                     <span>{g.difficulty}</span>
                   </div>
-                  <span className="relative z-10 mt-6 inline-block text-brass-soft/0 group-hover:text-brass-soft text-sm tracking-widest uppercase transition-colors">
+                  <span className="relative z-10 mt-6 inline-block text-accent/0 group-hover:text-accent text-sm tracking-widest uppercase transition-colors">
                     Deal me in →
                   </span>
                 </Link>
@@ -157,7 +156,7 @@ export default function Home() {
         </ul>
       </section>
 
-      <footer className="mt-24 pt-8 border-t border-brass/15 text-center text-cream/40 text-xs tracking-[0.3em] uppercase">
+      <footer className="mt-24 pt-8 border-t border-line text-center text-ink-soft text-xs tracking-[0.3em] uppercase">
         ♠&ensp;♥&ensp;♦&ensp;♣&emsp;Shuffle well&emsp;♣&ensp;♦&ensp;♥&ensp;♠
       </footer>
     </main>

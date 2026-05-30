@@ -20,7 +20,7 @@ export default function GamePage() {
     return (
       <main className="mx-auto max-w-xl px-6 py-24 text-center">
         <p className="font-display text-3xl">Unknown game.</p>
-        <Link to="/" className="text-brass-soft underline mt-4 inline-block">
+        <Link to="/" className="text-accent underline mt-4 inline-block">
           Back to the handbook
         </Link>
       </main>
@@ -36,7 +36,7 @@ export default function GamePage() {
         aria-label="Steps"
         className="hidden lg:flex fixed left-6 top-1/2 -translate-y-1/2 z-20 flex-col items-center gap-3"
       >
-        <span className="text-brass-soft/70 text-[0.6rem] tracking-[0.25em] [writing-mode:vertical-rl] mb-2">
+        <span className="text-accent text-[0.6rem] tracking-[0.25em] [writing-mode:vertical-rl] mb-2">
           {game.title.toUpperCase()}
         </span>
         {snapshots.map((s, i) => (
@@ -51,19 +51,19 @@ export default function GamePage() {
       </nav>
 
       <nav className="py-6">
-        <Link to="/" className="text-cream/60 hover:text-brass-soft text-sm uppercase tracking-widest transition-colors">
+        <Link to="/" className="text-ink-soft hover:text-accent text-sm uppercase tracking-widest transition-colors">
           ← Handbook
         </Link>
       </nav>
 
       <header className="mb-8 md:mb-0">
-        <p className="reveal font-body uppercase tracking-[0.35em] text-brass-soft/80 text-xs mb-3">
+        <p className="reveal font-body uppercase tracking-[0.35em] text-accent text-xs mb-3">
           {game.players} players · {game.playTime} · {game.difficulty}
         </p>
-        <h1 className="reveal font-display text-5xl md:text-7xl font-black text-cream" style={{ animationDelay: '0.06s' }}>
+        <h1 className="reveal font-display text-5xl md:text-7xl font-black text-ink" style={{ animationDelay: '0.06s' }}>
           {game.title}
         </h1>
-        <p className="reveal font-body text-cream/70 mt-3 max-w-xl text-lg" style={{ animationDelay: '0.12s' }}>
+        <p className="reveal font-body text-ink-soft mt-3 max-w-xl text-lg" style={{ animationDelay: '0.12s' }}>
           {game.blurb}
         </p>
       </header>
@@ -85,23 +85,23 @@ export default function GamePage() {
               data-index={i}
               ref={register(i)}
               className={`min-h-[70vh] flex flex-col justify-center py-10 transition-opacity duration-500 ${
-                i === active ? 'opacity-100' : 'opacity-35'
+                i === active ? 'opacity-100' : 'opacity-30'
               }`}
             >
-              <span className="font-display text-brass-soft/90 text-5xl font-black leading-none tabular-nums">
+              <span className="font-display text-accent text-5xl font-black leading-none tabular-nums">
                 {String(i + 1).padStart(2, '0')}
-                <span className="font-body text-cream/30 text-base align-top ml-2">
+                <span className="font-body text-ink-soft text-base align-top ml-2">
                   / {String(snapshots.length).padStart(2, '0')}
                 </span>
               </span>
-              <h2 className="font-display text-3xl md:text-4xl font-semibold text-cream mt-4">
+              <h2 className="font-display text-3xl md:text-4xl font-semibold text-ink mt-4">
                 {s.step.title}
               </h2>
-              <p className="font-body text-lg text-cream/80 mt-4 leading-relaxed">
+              <p className="font-body text-lg text-ink-soft mt-4 leading-relaxed">
                 {s.step.narration}
               </p>
               {s.step.callout && (
-                <p className="mt-5 border-l-2 border-brass pl-4 text-cream/70 italic font-body">
+                <p className="mt-5 border-l-2 border-accent pl-4 text-ink-soft italic font-body">
                   {s.step.callout}
                 </p>
               )}
@@ -114,15 +114,15 @@ export default function GamePage() {
       {game.notes && game.notes.length > 0 && (
         <section className="mt-16 md:mt-24 max-w-3xl">
           <div className="deco-rule mb-10">
-            <span className="font-display not-italic text-cream/90 text-sm tracking-[0.25em]">
+            <span className="font-display not-italic text-ink text-sm tracking-[0.25em]">
               VARIATIONS&nbsp;&amp;&nbsp;FINE&nbsp;PRINT
             </span>
           </div>
           <dl className="grid gap-x-8 gap-y-8 sm:grid-cols-2">
             {game.notes.map((n) => (
-              <div key={n.heading} className="border-l-2 border-brass/40 pl-5">
-                <dt className="font-display text-xl text-brass-soft mb-2">{n.heading}</dt>
-                <dd className="font-body text-cream/65 leading-relaxed">{n.body}</dd>
+              <div key={n.heading} className="border-l-2 border-accent pl-5">
+                <dt className="font-display text-xl text-accent mb-2">{n.heading}</dt>
+                <dd className="font-body text-ink-soft leading-relaxed">{n.body}</dd>
               </div>
             ))}
           </dl>

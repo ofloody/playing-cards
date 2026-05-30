@@ -3,50 +3,29 @@
 @theme {
   --font-display: "Fraunces", Georgia, serif;
   --font-body: "Newsreader", Georgia, serif;
-  --color-ink: #14110d;
-  --color-cream: #f6f0e2;
-  --color-felt-900: #07140f;
-  --color-felt-700: #0f3d2e;
-  --color-felt-500: #16513c;
-  --color-brass: #c8a24a;
-  --color-brass-soft: #e3c987;
+  --color-paper: #f4f1e9;     /* warm paper background */
+  --color-surface: #ffffff;   /* cards, table */
+  --color-ink: #1d1b16;       /* primary text */
+  --color-ink-soft: #6b6557;  /* secondary text */
+  --color-line: #ddd7c9;      /* hairlines / borders */
+  --color-accent: #1f6b4c;    /* forest-green UI accent */
+  --color-accent-soft: #2f8a64;
   --color-suit-red: #b3433a;
-  --color-suit-ink: #1c1a17;
+  --color-suit-ink: #1d1b16;
 }
 
 html, body, #root { height: 100%; }
 html { scroll-behavior: smooth; }
 body {
   margin: 0;
-  background: var(--color-felt-900);
-  color: var(--color-cream);
+  background: var(--color-paper);
+  color: var(--color-ink);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-/* Atmospheric backdrop: a warm brass bloom over deepening felt, plus film grain. */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -2;
-  background:
-    radial-gradient(80% 55% at 50% -8%, rgba(200, 162, 74, 0.16) 0%, transparent 60%),
-    radial-gradient(120% 80% at 50% 0%, var(--color-felt-700) 0%, var(--color-felt-900) 55%),
-    var(--color-felt-900);
-}
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  opacity: 0.04;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-
-::selection { background: var(--color-brass); color: var(--color-ink); }
+::selection { background: var(--color-accent); color: var(--color-surface); }
 
 /* ---- Motion vocabulary ---- */
 @keyframes fadeUp {
@@ -59,39 +38,39 @@ body::after {
 }
 @keyframes floatY {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-9px); }
+  50% { transform: translateY(-8px); }
 }
 .reveal { opacity: 0; animation: fadeUp 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
 
-/* ---- Art-deco hairline rule with a centred suit lozenge ---- */
+/* ---- Hairline rule with a centred label ---- */
 .deco-rule {
   display: flex;
   align-items: center;
   gap: 0.9rem;
-  color: var(--color-brass);
+  color: var(--color-accent);
 }
 .deco-rule::before,
 .deco-rule::after {
   content: "";
   height: 1px;
   flex: 1;
-  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--color-brass) 60%, transparent), transparent);
+  background: var(--color-line);
 }
 .deco-rule span { font-size: 0.7rem; letter-spacing: 0.2em; }
 
-/* ---- Decorative corner brackets (deco frame) ---- */
+/* ---- Corner brackets (clean frame) ---- */
 .deco-corners { position: relative; }
 .deco-corners::before,
 .deco-corners::after {
   content: "";
   position: absolute;
-  width: 26px;
-  height: 26px;
-  border: 1px solid color-mix(in srgb, var(--color-brass) 55%, transparent);
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--color-line);
   pointer-events: none;
 }
-.deco-corners::before { top: -10px; left: -10px; border-right: 0; border-bottom: 0; }
-.deco-corners::after { bottom: -10px; right: -10px; border-left: 0; border-top: 0; }
+.deco-corners::before { top: -9px; left: -9px; border-right: 0; border-bottom: 0; }
+.deco-corners::after { bottom: -9px; right: -9px; border-left: 0; border-top: 0; }
 
 /* ---- The hero's fanned hand ---- */
 .fan { position: relative; }
@@ -104,9 +83,9 @@ body::after {
 .fan-card {
   width: 100%;
   aspect-ratio: 5 / 7;
-  border-radius: 0.6rem;
-  background: var(--color-cream);
-  box-shadow: 0 18px 34px -16px rgba(0, 0, 0, 0.7), inset 0 0 0 1px rgba(20, 17, 13, 0.12);
+  border-radius: 0.55rem;
+  background: var(--color-surface);
+  box-shadow: inset 0 0 0 1px var(--color-line), 0 8px 18px -12px rgba(0, 0, 0, 0.4);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -120,33 +99,32 @@ body::after {
 .fan-card .pip-b { align-self: flex-end; transform: rotate(180deg); }
 
 /* ---- Game index cards (home grid) ---- */
-.game-grid { perspective: 1200px; }
 .game-card {
   position: relative;
-  transform-style: preserve-3d;
-  transition:
-    transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1),
-    border-color 0.3s,
-    box-shadow 0.45s;
   overflow: hidden;
+  background: var(--color-surface);
+  transition:
+    transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1),
+    border-color 0.3s,
+    box-shadow 0.35s;
 }
 .game-card::after {
-  /* faint engraved suit watermark */
+  /* faint suit watermark in line colour */
   content: attr(data-suit);
   position: absolute;
-  right: -0.4rem;
+  right: -0.3rem;
   bottom: -1.6rem;
-  font-size: 8rem;
+  font-size: 7.5rem;
   line-height: 1;
-  color: color-mix(in srgb, var(--color-brass) 14%, transparent);
+  color: var(--color-line);
   pointer-events: none;
-  transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 .game-card:hover {
-  transform: translateY(-8px) rotateX(5deg) rotateY(-4deg);
-  box-shadow: 0 34px 60px -28px rgba(0, 0, 0, 0.85);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 30px -16px rgba(0, 0, 0, 0.28);
 }
-.game-card:hover::after { transform: translateY(-8px) rotate(-8deg); }
+.game-card:hover::after { transform: translateY(-6px) rotate(-6deg); }
 .card-index {
   font-family: var(--font-display);
   font-weight: 600;
@@ -158,47 +136,38 @@ body::after {
 
 /* ---- Game-page progress rail ---- */
 .rail-node {
-  position: relative;
-  width: 11px;
-  height: 11px;
+  width: 10px;
+  height: 10px;
   transform: rotate(45deg);
-  border: 1px solid color-mix(in srgb, var(--color-brass) 45%, transparent);
+  border: 1px solid var(--color-accent);
   background: transparent;
-  transition: all 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
   cursor: pointer;
 }
 .rail-node.is-active {
-  background: var(--color-brass);
-  box-shadow: 0 0 14px 2px rgba(200, 162, 74, 0.6);
-  transform: rotate(45deg) scale(1.45);
+  background: var(--color-accent);
+  transform: rotate(45deg) scale(1.4);
 }
-.rail-node.is-done { background: color-mix(in srgb, var(--color-brass) 50%, transparent); }
+.rail-node.is-done { background: color-mix(in srgb, var(--color-accent) 45%, transparent); }
 
-/* ===== Felt table (game page) ===== */
+/* ===== Table surface (game page) — clean, flat, framed ===== */
 .table-felt {
   position: relative;
   width: 100%;
-  border-radius: 1.25rem;
+  border-radius: 1rem;
   overflow: hidden;
-  background:
-    radial-gradient(120% 90% at 50% 35%, var(--color-felt-500) 0%, var(--color-felt-700) 45%, var(--color-felt-900) 100%);
-  box-shadow: inset 0 0 120px rgba(0,0,0,0.55), 0 30px 60px -30px rgba(0,0,0,0.8);
+  background: var(--color-surface);
+  box-shadow: inset 0 0 0 1px var(--color-line);
 }
 .table-felt::before {
-  /* inner brass keyline, like the border of a card table */
+  /* inner keyline, like a printed diagram border */
   content: "";
   position: absolute;
   inset: 12px;
-  border-radius: 0.9rem;
-  border: 1px solid color-mix(in srgb, var(--color-brass) 22%, transparent);
+  border-radius: 0.7rem;
+  border: 1px solid var(--color-line);
   pointer-events: none;
   z-index: 1;
-}
-.table-felt::after {
-  content: "";
-  position: absolute; inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  pointer-events: none;
 }
 
 /* 3D flip */
@@ -211,22 +180,25 @@ body::after {
   position: absolute; inset: 0;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  border-radius: 0.5rem;
+  border-radius: 0.45rem;
   display: flex;
 }
 .card-front {
-  background: var(--color-cream);
-  box-shadow: 0 6px 14px -6px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(20,17,13,0.12);
+  background: var(--color-surface);
+  box-shadow: inset 0 0 0 1px var(--color-line), 0 2px 6px -3px rgba(0, 0, 0, 0.22);
 }
 .card-back {
   transform: rotateY(180deg);
-  background:
-    repeating-linear-gradient(45deg, var(--color-felt-700) 0 6px, var(--color-felt-900) 6px 12px);
-  box-shadow: inset 0 0 0 3px var(--color-brass), inset 0 0 0 5px var(--color-felt-900), 0 6px 14px -6px rgba(0,0,0,0.6);
-  border-radius: 0.5rem;
+  border-radius: 0.45rem;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--color-accent) 0 7px,
+    color-mix(in srgb, var(--color-accent) 85%, #000) 7px 8px
+  );
+  box-shadow: inset 0 0 0 4px var(--color-surface), inset 0 0 0 5px var(--color-line);
 }
 .card-glow {
-  box-shadow: 0 0 0 2px var(--color-brass), 0 0 24px 4px rgba(200,162,74,0.55), 0 6px 14px -6px rgba(0,0,0,0.6);
+  box-shadow: 0 0 0 2px var(--color-accent), 0 0 18px 3px rgba(31, 107, 76, 0.35), 0 2px 6px -3px rgba(0, 0, 0, 0.22);
 }
 
 @media (prefers-reduced-motion: reduce) {
