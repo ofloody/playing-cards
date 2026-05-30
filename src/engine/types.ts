@@ -11,7 +11,8 @@ export interface ZoneDef {
   layout: LayoutKind;
   rotate?: number;   // degrees applied to every card in the zone (e.g. 180 for opponent)
   gap?: number;      // spacing as fraction of table width (row/fan)
-  label?: string;    // optional caption under the zone
+  label?: string;    // optional caption rendered beside the zone
+  labelPos?: 'above' | 'below'; // where the caption sits relative to the anchor (default 'below')
 }
 
 export interface Board {
@@ -27,6 +28,7 @@ export interface CardTransform {
   z: number;
   highlight: boolean;
   dim: boolean;
+  delay: number;    // seconds to delay this card's move (for staggered "fast-forward" plays)
 }
 
 export interface Step {
@@ -37,6 +39,9 @@ export interface Step {
   apply: (board: Board) => Board;
   highlight?: CardId[];    // cards to emphasise this step
   spotlight?: string[];    // zone ids kept lit; all others dimmed
+  status?: Record<string, string>; // zone id -> short status word (e.g. 'starts', 'pass', 'done')
+  impact?: boolean;        // shake the table on this step (a bomb / revolution landing)
+  stagger?: string[];      // zone ids whose cards arrive one-by-one (fast-forward play feel)
 }
 
 export interface Game {

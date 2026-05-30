@@ -22,11 +22,14 @@ function jitter(id: CardId): number {
   return (h / 100 - 0.5) * 4;
 }
 
+// Seconds of delay added per card index, in a zone that's "staggered" this step.
+const STAGGER_UNIT = 0.09;
+
 export function computeTransforms(
   board: Board,
   zones: ZoneDef[],
   dims: TableDims,
-  opts: { highlight?: CardId[]; spotlight?: string[] } = {},
+  opts: { highlight?: CardId[]; spotlight?: string[]; stagger?: Set<string> } = {},
 ): Record<CardId, CardTransform> {
   const result: Record<CardId, CardTransform> = {};
   const highlight = new Set(opts.highlight ?? []);
@@ -38,6 +41,7 @@ export function computeTransforms(
     const cx = zone.anchor.x * dims.width;
     const cy = zone.anchor.y * dims.height;
     const dimZone = spotlight ? !spotlight.has(zone.id) : false;
+    const staggered = opts.stagger?.has(zone.id) ?? false;
 
     cards.forEach((id, i) => {
       let x = cx;
@@ -65,6 +69,7 @@ export function computeTransforms(
         z: i,
         highlight: highlight.has(id),
         dim: dimZone && !highlight.has(id),
+        delay: staggered ? i * STAGGER_UNIT : 0,
       };
     });
   }

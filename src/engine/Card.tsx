@@ -12,7 +12,7 @@ export function Card({
   return (
     <motion.div
       className="absolute left-0 top-0 will-change-transform"
-      style={{ width: w, height: h, zIndex: t.highlight ? 999 : t.z }}
+      style={{ width: w, height: h, zIndex: (t.highlight ? 1000 : 0) + t.z }}
       initial={false}
       animate={{
         x: t.x - w / 2,
@@ -21,12 +21,12 @@ export function Card({
         scale: t.highlight ? 1.06 : 1,
         opacity: t.dim ? 0.35 : 1,
       }}
-      transition={{ type: 'spring', stiffness: 120, damping: 18, mass: 0.6 }}
+      transition={{ type: 'spring', stiffness: 120, damping: 18, mass: 0.6, delay: t.delay }}
     >
       <motion.div
         className="card-inner"
         animate={{ rotateY: t.faceUp ? 0 : 180 }}
-        transition={{ duration: 0.5, ease: 'easeInOut' }}
+        transition={{ duration: 0.5, ease: 'easeInOut', delay: t.delay }}
       >
         <div
           className={`card-face card-front ${t.highlight ? 'card-glow' : ''}`}

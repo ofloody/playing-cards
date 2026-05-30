@@ -41,6 +41,17 @@ body {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
 }
+/* Impact shake for a bomb / revolution landing on the table. */
+@keyframes tableShake {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  10% { transform: translate(-5px, 3px) rotate(-0.4deg); }
+  25% { transform: translate(6px, -3px) rotate(0.4deg); }
+  40% { transform: translate(-5px, 2px) rotate(-0.3deg); }
+  55% { transform: translate(4px, -2px) rotate(0.3deg); }
+  70% { transform: translate(-3px, 1px) rotate(-0.2deg); }
+  85% { transform: translate(2px, -1px) rotate(0.1deg); }
+}
+.table-shake { animation: tableShake 0.55s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
 .reveal { opacity: 0; animation: fadeUp 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
 
 /* ---- Hairline rule with a centred label ---- */
@@ -135,21 +146,32 @@ body {
   align-items: center;
 }
 
-/* ---- Game-page progress rail ---- */
-.rail-node {
-  width: 10px;
-  height: 10px;
-  transform: rotate(45deg);
-  border: 1px solid var(--color-accent);
-  background: transparent;
-  transition: all 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
-  cursor: pointer;
+/* ---- Game-page progress: a single "2" card that slides down the track ---- */
+.rail-card {
+  width: 34px;
+  height: 48px;
+  border-radius: 5px;
+  background: var(--color-surface);
+  box-shadow: inset 0 0 0 1px var(--color-line), 0 8px 16px -8px rgba(0, 0, 0, 0.5);
+  color: var(--color-ink);
 }
-.rail-node.is-active {
-  background: var(--color-accent);
-  transform: rotate(45deg) scale(1.4);
+.rail-card .rank {
+  position: absolute;
+  top: 3px;
+  left: 5px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 1;
 }
-.rail-node.is-done { background: color-mix(in srgb, var(--color-accent) 45%, transparent); }
+.rail-card .pip {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+}
 
 /* ===== Table surface (game page) — clean, flat, framed ===== */
 .table-felt {

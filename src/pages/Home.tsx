@@ -45,24 +45,16 @@ export default function Home() {
       <section className="grid items-center gap-10 md:grid-cols-[1.05fr_0.95fr] md:gap-8">
         <div>
           <p className="reveal font-body uppercase tracking-[0.4em] text-accent text-xs mb-5">
-            A Field Guide to the Table
+            For our ever worsening long term memory
           </p>
           <h1
             className="reveal font-display text-6xl md:text-8xl font-black leading-[0.86] text-ink"
             style={{ animationDelay: '0.08s' }}
           >
-            Card<br />
-            <span className="text-accent">Games</span><br />
-            Handbook
+            Card Game<br />
+            <span className="text-accent">Field Guide</span>
           </h1>
-          <p
-            className="reveal font-body text-ink-soft text-lg mt-7 max-w-md leading-relaxed"
-            style={{ animationDelay: '0.16s' }}
-          >
-            Not a wall of rules — a hand played out in front of you. Scroll any
-            game and watch it deal, flip, and resolve, one move at a time.
-          </p>
-          <div className="reveal mt-9 max-w-md" style={{ animationDelay: '0.24s' }}>
+          <div className="reveal mt-9 max-w-md" style={{ animationDelay: '0.16s' }}>
             <div className="deco-rule">
               <span>♠ ♥ ♦ ♣</span>
             </div>

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { gameMap } from '../games';
 import { runGame } from '../engine/runGame';
@@ -16,6 +16,11 @@ export default function GamePage() {
   const snapshots = useMemo(() => (game ? runGame(game) : []), [game]);
   const { active, register } = useActiveStep(snapshots.length);
 
+  // Open each game at the top — route changes don't reset scroll on their own.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
+
   if (!game) {
     return (
       <main className="mx-auto max-w-xl px-6 py-24 text-center">
@@ -28,6 +33,7 @@ export default function GamePage() {
   }
 
   const snap = snapshots[Math.min(active, snapshots.length - 1)];
+  const progress = snapshots.length > 1 ? active / (snapshots.length - 1) : 0;
 
   return (
     <>
@@ -50,9 +56,9 @@ export default function GamePage() {
                 <summary className="list-none [&::-webkit-details-marker]:hidden cursor-pointer select-none rounded-full border border-accent/40 px-3 py-1 text-[0.7rem] uppercase tracking-[0.2em] text-accent hover:border-accent hover:text-accent-soft transition-colors">
                   Origins
                 </summary>
-                <div className="absolute right-0 top-full mt-3 z-40 w-[min(88vw,30rem)] rounded-xl border border-line bg-paper p-6 shadow-[0_24px_48px_-24px_rgba(0,0,0,0.4)]">
+                <div className="absolute right-0 top-full mt-3 z-40 w-[min(88vw,32rem)] max-h-[70vh] overflow-y-auto rounded-xl border border-line bg-paper p-6 shadow-[0_24px_48px_-24px_rgba(0,0,0,0.4)]">
                   <p className="font-display text-xs uppercase tracking-[0.25em] text-accent mb-3">Origins</p>
-                  <p className="font-body text-ink-soft leading-relaxed text-[0.95rem]">{game.origin}</p>
+                  <p className="font-body text-ink-soft leading-relaxed text-[0.95rem] whitespace-pre-line">{game.origin}</p>
                 </div>
               </details>
             )}
@@ -60,23 +66,41 @@ export default function GamePage() {
         </div>
       </header>
 
-      {/* Progress rail (desktop) */}
+      {/* Progress rail (desktop) — a single "2" card that slides down the
+          track as you advance, the line filling in behind it. */}
       <nav
         aria-label="Steps"
-        className="hidden lg:flex fixed left-6 top-1/2 -translate-y-1/2 z-20 flex-col items-center gap-3"
+        className="hidden lg:flex fixed left-5 top-1/2 -translate-y-1/2 z-20 flex-col items-center"
       >
-        <span className="text-accent text-[0.6rem] tracking-[0.25em] [writing-mode:vertical-rl] mb-2">
-          {game.title.toUpperCase()}
-        </span>
-        {snapshots.map((s, i) => (
-          <button
-            key={s.step.id}
-            onClick={() => scrollToStep(i)}
-            aria-label={`Step ${i + 1}: ${s.step.title}`}
-            aria-current={i === active ? 'step' : undefined}
-            className={`rail-node ${i === active ? 'is-active' : i < active ? 'is-done' : ''}`}
+        <div className="relative h-[58vh] w-9">
+          {/* track */}
+          <div className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-line" />
+          {/* filled portion behind the card */}
+          <div
+            className="absolute left-1/2 top-0 w-px -translate-x-1/2 bg-accent transition-[height] duration-500 ease-out"
+            style={{ height: `${progress * 100}%` }}
           />
-        ))}
+          {/* invisible per-step click zones keep the rail navigable */}
+          <div className="absolute inset-0 flex flex-col">
+            {snapshots.map((s, i) => (
+              <button
+                key={s.step.id}
+                onClick={() => scrollToStep(i)}
+                aria-label={`Step ${i + 1}: ${s.step.title}`}
+                aria-current={i === active ? 'step' : undefined}
+                className="flex-1 w-full cursor-pointer"
+              />
+            ))}
+          </div>
+          {/* the sliding card */}
+          <div
+            className="rail-card pointer-events-none absolute left-1/2 transition-[top] duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)]"
+            style={{ top: `${progress * 100}%`, transform: 'translate(-50%, -50%)' }}
+          >
+            <span className="rank">2</span>
+            <span className="pip">♠</span>
+          </div>
+        </div>
       </nav>
 
       <main className="mx-auto max-w-6xl px-4 md:px-8 pt-16 md:pt-0 pb-[10vh]">
@@ -102,16 +126,13 @@ export default function GamePage() {
                   i === active ? 'opacity-100' : 'opacity-30'
                 }`}
               >
-                <span className="font-display text-accent text-5xl font-black leading-none tabular-nums">
-                  {String(i + 1).padStart(2, '0')}
-                  <span className="font-body text-ink-soft text-base align-top ml-2">
-                    / {String(snapshots.length).padStart(2, '0')}
-                  </span>
+                <span className="font-body text-[0.7rem] uppercase tracking-[0.3em] text-ink-soft tabular-nums">
+                  {String(i + 1).padStart(2, '0')} / {String(snapshots.length).padStart(2, '0')}
                 </span>
-                <h2 className="font-display text-3xl md:text-4xl font-semibold text-ink mt-4">
+                <h2 className="font-display text-3xl md:text-4xl font-semibold text-ink mt-3">
                   {s.step.title}
                 </h2>
-                <p className="font-body text-lg text-ink-soft mt-4 leading-relaxed">
+                <p className="font-body text-lg text-ink mt-4 leading-relaxed">
                   {s.step.narration}
                 </p>
                 {s.step.callout && (
