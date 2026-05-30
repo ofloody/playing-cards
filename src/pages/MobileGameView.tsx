@@ -82,10 +82,7 @@ export function MobileGameView({
 
         {/* Directions, anchored at the bottom. */}
         <div className="flex-1 min-h-0 overflow-y-auto px-6 pb-3 flex flex-col justify-center">
-          <span className="font-body text-[0.65rem] uppercase tracking-[0.3em] text-ink-soft tabular-nums">
-            {String(active + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
-          </span>
-          <h2 className="font-display text-2xl font-semibold text-ink mt-2">
+          <h2 className="font-display text-2xl font-semibold text-ink">
             {snap.step.title}
           </h2>
           <p className="font-body text-base text-ink mt-3 leading-relaxed">
