@@ -1,5 +1,5 @@
 import { test, expect } from 'bun:test';
-import { placeAll, cardsInZone, topOf, move, flip } from './board';
+import { placeAll, cardsInZone, topOf, move, moveToBottom, flip } from './board';
 
 test('placeAll puts cards in a zone in order, all one facing', () => {
   const b = placeAll(['S-A', 'S-2', 'S-3'], 'deck', false);
@@ -26,6 +26,15 @@ test('actions are immutable', () => {
   const next = move(b, ['S-A'], 'play', { faceUp: true });
   expect(cardsInZone(b, 'deck')).toEqual(['S-A']); // original unchanged
   expect(next).not.toBe(b);
+});
+
+test('moveToBottom places cards beneath the existing pile', () => {
+  let b = placeAll(['S-2', 'S-3'], 'stock', false); // S-2 bottom, S-3 top
+  b = moveToBottom(b, ['H-9'], 'stock', { faceUp: false });
+  // sorted bottom -> top: the new card leads
+  expect(cardsInZone(b, 'stock')).toEqual(['H-9', 'S-2', 'S-3']);
+  // the original top is unchanged
+  expect(topOf(b, 'stock')).toEqual(['S-3']);
 });
 
 test('flip toggles facing without moving', () => {

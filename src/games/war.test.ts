@@ -12,10 +12,14 @@ test('war reduces to one snapshot per step with no lost cards', () => {
   }
 });
 
-test('after collect, Player 1 won pile holds the two battle cards', () => {
+test('after collect, the battle cards go to the BOTTOM of P1 stock', () => {
   const snaps = runGame(war);
   const collect = snaps.find((s) => s.step.id === 'collect')!;
-  expect(cardsInZone(collect.board, 'p1-won')).toEqual(['S-A', 'H-9']);
+  const stock = cardsInZone(collect.board, 'p1-stock'); // sorted bottom -> top
+  expect(collect.board.placement['S-A'].zone).toBe('p1-stock');
+  expect(collect.board.placement['H-9'].zone).toBe('p1-stock');
+  // they sit at the very bottom (drawn last), so they lead the sorted order
+  expect(stock.slice(0, 2)).toEqual(['S-A', 'H-9']);
 });
 
 test('the basic war is one-down-one-up: six cards change hands', () => {
@@ -27,10 +31,10 @@ test('the basic war is one-down-one-up: six cards change hands', () => {
     cardsInZone(beforeWar.board, 'p1-play').length +
     cardsInZone(beforeWar.board, 'p2-play').length;
   expect(onTable).toBe(6);
-  // after the sweep both play zones are empty and the 6 war cards joined p1-won
+  // after the sweep both play zones are empty and the 6 war cards joined p1 stock
   expect(cardsInZone(afterWar.board, 'p1-play')).toEqual([]);
   expect(cardsInZone(afterWar.board, 'p2-play')).toEqual([]);
   for (const id of ['S-5', 'S-6', 'S-K', 'C-5', 'C-6', 'C-3']) {
-    expect(afterWar.board.placement[id].zone).toBe('p1-won');
+    expect(afterWar.board.placement[id].zone).toBe('p1-stock');
   }
 });

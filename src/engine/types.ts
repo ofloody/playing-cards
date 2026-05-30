@@ -47,6 +47,7 @@ export interface Game {
   playTime: string;    // e.g. "10 min"
   difficulty: 'Easy' | 'Medium' | 'Involved';
   accent?: string;     // optional CSS colour for per-game theming
+  origin?: string;     // verbatim origin/history blurb (shown in a disclosure)
   zones: ZoneDef[];
   build: () => Board;  // initial board (every card placed in some zone)
   steps: Step[];

@@ -47,6 +47,25 @@ export function move(
   return next;
 }
 
+// Moves cards to the BOTTOM of `zone` (below every card currently there), so
+// they will be drawn last — e.g. a War winner adding cards under their stock.
+export function moveToBottom(
+  board: Board,
+  ids: CardId[],
+  zone: string,
+  opts: { faceUp?: boolean } = {},
+): Board {
+  const next = clone(board);
+  const existing = cardsInZone(next, zone);
+  const minOrder = existing.length ? next.placement[existing[0]].order : 0;
+  let order = minOrder - ids.length;
+  for (const id of ids) {
+    next.placement[id] = { zone, order: order++ };
+    if (opts.faceUp !== undefined) next.faceUp[id] = opts.faceUp;
+  }
+  return next;
+}
+
 export function flip(board: Board, ids: CardId[], faceUp: boolean): Board {
   const next = clone(board);
   for (const id of ids) next.faceUp[id] = faceUp;
