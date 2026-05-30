@@ -50,4 +50,10 @@ export interface Game {
   zones: ZoneDef[];
   build: () => Board;  // initial board (every card placed in some zone)
   steps: Step[];
+  notes?: GameNote[];  // optional secondary "variations & fine print" section
+}
+
+export interface GameNote {
+  heading: string;
+  body: string;
 }

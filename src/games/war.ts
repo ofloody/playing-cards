@@ -29,7 +29,7 @@ export const war: Game = {
       id: 'deck',
       title: 'A standard deck',
       narration:
-        'War uses one standard 52-card deck. Shuffle it well — War is a game of pure luck, with no decisions to make.',
+        'War is a children’s game played all over the world. It uses one standard 52-card deck and involves no strategy at all — just spotting the higher card. Cards rank as usual, Ace high down to 2; suits are ignored.',
       apply: (b) => b,
       spotlight: ['deck'],
     },
@@ -80,7 +80,7 @@ export const war: Game = {
       id: 'tie',
       title: 'A tie means War!',
       narration:
-        'When both flipped cards share the same rank, it is War. Here both players turn a Five — neither wins outright.',
+        'When the two flipped cards are equal in rank, it is War. Here both players turn a Five. The tied cards stay on the table and the war begins.',
       apply: (b) => {
         let n = move(b, ['S-5'], 'p1-play', { faceUp: true });
         n = move(n, ['C-5'], 'p2-play', { faceUp: true });
@@ -91,13 +91,13 @@ export const war: Game = {
     },
     {
       id: 'war',
-      title: 'Three down, one up',
+      title: 'One down, one up',
       narration:
-        'Each player lays three more cards face-down, then flips a fourth face-up. These new face-up cards decide the War.',
+        'Each player plays their next card face-down, then a second card face-up. These new face-up cards decide the war. (If they tie again, the war simply continues the same way.)',
       apply: (b) => {
-        let n = move(b, ['S-6', 'S-7', 'S-8'], 'p1-play', { faceUp: false });
+        let n = move(b, ['S-6'], 'p1-play', { faceUp: false });
         n = move(n, ['S-K'], 'p1-play', { faceUp: true });
-        n = move(n, ['C-6', 'C-7', 'C-8'], 'p2-play', { faceUp: false });
+        n = move(n, ['C-6'], 'p2-play', { faceUp: false });
         n = move(n, ['C-3'], 'p2-play', { faceUp: true });
         return n;
       },
@@ -108,11 +108,11 @@ export const war: Game = {
       id: 'war-win',
       title: 'Winner sweeps the pile',
       narration:
-        'The higher face-up card wins every card on the table — all ten this time. The King beats the Three, so Player 1 sweeps the War.',
+        'The higher new face-up card wins every card in the war — all six this time. The King beats the Three, so Player 1 takes the lot, face-down, to the bottom of their pile.',
       apply: (b) =>
         move(
           b,
-          ['S-5', 'S-6', 'S-7', 'S-8', 'S-K', 'C-5', 'C-6', 'C-7', 'C-8', 'C-3'],
+          ['S-5', 'S-6', 'S-K', 'C-5', 'C-6', 'C-3'],
           'p1-won',
           { faceUp: false },
         ),
@@ -126,6 +126,24 @@ export const war: Game = {
         'Players keep flipping until one player has won every card. When a player runs out, they shuffle their won pile into a new stock and play on. The last player standing wins.',
       apply: (b) => b,
       spotlight: ['p1-stock', 'p1-won'],
+    },
+  ],
+  notes: [
+    {
+      heading: 'The three-card war',
+      body: 'A popular variation lays three cards face-down instead of one — players often chant “W-A-R” as they do — then flip a fourth to decide it. The winner takes all ten cards. Everything else plays the same.',
+    },
+    {
+      heading: 'Running out mid-war',
+      body: 'If you can’t complete a war you lose; if neither player can, whoever runs out first loses (and simultaneous is a draw). A common house rule instead: your last card is flipped face-up and stands for the rest of that war.',
+    },
+    {
+      heading: 'Three or four players',
+      body: 'Deal as evenly as possible (17 each for three, 13 for four). Highest card wins the turn; on a tie, everyone — not only the tied players — joins the war. Run out of cards and you drop out; the last player holding cards wins.',
+    },
+    {
+      heading: 'Around the world',
+      body: 'The same flip-and-compare core powers many variants: stealing captured cards, the Russian Drunkard (P’yanitsa), the German Tod und Leben, a Syrian version, and even a casino gambling version.',
     },
   ],
 };

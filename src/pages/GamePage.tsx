@@ -69,9 +69,10 @@ export default function GamePage() {
       </header>
 
       <div className="md:grid md:grid-cols-[1.1fr_0.9fr] md:gap-12">
-        {/* Sticky table */}
-        <div className="md:sticky md:top-6 md:self-start z-10 py-6">
-          <div className="sticky top-3 md:static deco-corners">
+        {/* Sticky table — centred in the viewport so it lines up with the
+            centred active step text, including the final step. */}
+        <div className="md:sticky md:top-0 md:h-screen md:self-start md:flex md:items-center z-10">
+          <div className="sticky top-3 md:static deco-corners w-full py-6 md:py-0">
             <CardTable snapshot={snap} zones={game.zones} />
           </div>
         </div>
@@ -108,6 +109,25 @@ export default function GamePage() {
           ))}
         </ol>
       </div>
+
+      {/* Variations & fine print */}
+      {game.notes && game.notes.length > 0 && (
+        <section className="mt-16 md:mt-24 max-w-3xl">
+          <div className="deco-rule mb-10">
+            <span className="font-display not-italic text-cream/90 text-sm tracking-[0.25em]">
+              VARIATIONS&nbsp;&amp;&nbsp;FINE&nbsp;PRINT
+            </span>
+          </div>
+          <dl className="grid gap-x-8 gap-y-8 sm:grid-cols-2">
+            {game.notes.map((n) => (
+              <div key={n.heading} className="border-l-2 border-brass/40 pl-5">
+                <dt className="font-display text-xl text-brass-soft mb-2">{n.heading}</dt>
+                <dd className="font-body text-cream/65 leading-relaxed">{n.body}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      )}
     </main>
   );
 }
