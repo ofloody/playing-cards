@@ -43,5 +43,13 @@ layout→transform→Motion animation pipeline, and the scroll-reveal driver).
 ## Tech
 
 Bun · Vite · React 19 · TypeScript · Motion · Tailwind CSS v4 · React Router 7.
-Card faces are inline Unicode/CSS — no image assets. Deploys as a static site
-from `dist/`.
+Card faces are inline Unicode/CSS — no image assets.
+
+## Deploying
+
+`bun run build` emits a static site to `dist/`. The app uses client-side
+routing (`BrowserRouter`), so a static host must rewrite unknown paths back to
+`index.html` (the usual SPA fallback) or a direct hit / refresh on
+`/game/<id>` will 404. On Netlify/Vercel this is the default SPA setting; on a
+plain file host, either configure the fallback or switch `BrowserRouter` to
+`HashRouter` in `src/main.tsx`.
