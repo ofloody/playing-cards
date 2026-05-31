@@ -300,7 +300,9 @@ As the game has spread, numerous variations have developed. I will describe a ty
       title: 'The trade — rank has its privileges',
       status: { 'p-south': 'Prez', 'p-north': 'V.P.', 'p-east': 'V.Bum', 'p-west': 'Bum' },
       narration:
-        'Before a card is led, the losers pay tribute up the ladder. The Bum hands the President their two highest cards; the President picks any two to give back. The Vice-Bum and Vice-President swap one card the same way. Best cards flow up, unwanted cards trickle down — the rich get richer, and the Bum has to dig out from the bottom all over again.',
+        'Before a card is led, the losers pay tribute up the ladder. The Bum hands the President their two highest cards — and in return the President sends two cards straight back down to West, here a throwaway 3 and 4 that land in the Bum’s hand. The Vice-Bum and Vice-President swap one card each the same way. Best cards flow up, unwanted ones trickle back down — the rich get richer, and the Bum digs out from the bottom all over again.',
+      callout:
+        'It’s a two-way swap: President ↔ Bum trade two cards each, Vice-President ↔ Vice-Bum one each.',
       apply: (b) => {
         // Bum → President: the two highest cards (here, the 2 and Ace of hearts).
         let n = move(b, ['H-2', 'H-A'], 'p-south', { faceUp: true });
