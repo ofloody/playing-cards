@@ -90,7 +90,7 @@ As the game has spread, numerous variations have developed. I will describe a ty
       id: 'deal',
       title: 'Deal it all out',
       narration:
-        'Deal the whole deck out clockwise so everyone holds about thirteen cards. You can see your own hand fanned along the bottom; the other three keep theirs hidden, so to you their cards just show as backs. The player to the dealer’s left leads first — that’s you.',
+        'Deal the whole deck out clockwise so everyone holds about thirteen cards. You can see your own hand fanned along the bottom; the other three keep theirs hidden, so to you their cards just show as backs. The player to the dealer’s left leads first — that’s you. (Many tables instead make whoever was dealt the 3♣ lead it as the very first card.)',
       apply: (b) => {
         let n = move(b, hands['p-south'], 'p-south', { faceUp: true });
         n = move(n, hands['p-west'], 'p-west', { faceUp: false });
@@ -178,7 +178,7 @@ As the game has spread, numerous variations have developed. I will describe a ty
       status: { 'p-south': 'revolution!', 'p-east': 'skipped' },
       impact: true,
       narration:
-        'Here’s what makes four of a kind special: completing it can be done by anyone, at any moment — you don’t have to wait for your turn. You’re holding the last two aces, so before East can even move, you SLAM them down and complete all four. The table jolts: that’s a revolution (not a bomb — the bomb is the 2). East is jumped clean over.',
+        'Here’s what makes four of a kind special: completing it can be done by anyone, at any moment — you don’t have to wait for your turn. You’re holding the last two aces, so before East can even move, you SLAM them down and complete all four. The table jolts: that’s a revolution (not a bomb — the bomb is the 2; and at some tables a revolution also flips the whole ranking for the rest of the hand — see the variations). East is jumped clean over.',
       apply: (b) => move(b, ['H-A', 'C-A'], 'trick', { faceUp: true }),
       highlight: ['D-A', 'S-A', 'H-A', 'C-A'],
       spotlight: ['trick', 'p-south'],
@@ -250,7 +250,7 @@ As the game has spread, numerous variations have developed. I will describe a ty
       impact: true,
       stagger: ['middle'],
       narration:
-        'Now watch West. The play fast-forwards — West fires card after card into the middle and races all the way down to a single card, closer to going out than anyone left and about to grab second place. But that last card is a 2, and you can never go out on a 2. The moment they’re down to it the bomb goes off in their hand — there’s nothing else to play and no one can clear it off for them, so right there, in an instant, West drops from nearly-second all the way to the bottom: the Bum. No waiting for the end; the 2 makes you the Bum on the spot, which is exactly why everyone else spent their twos early.',
+        'Now watch West. The play fast-forwards — West fires card after card into the middle and races all the way down to a single card, closer to going out than anyone left and about to grab second place. But that last card is a 2, and you can never go out on a 2. The moment they’re down to it the bomb goes off in their hand — there’s nothing else to play and no one can clear it off for them, so right there, in an instant, West drops from nearly-second all the way to the bottom: the Bum.',
       apply: (b) => {
         const c = clear(b);
         const others = cardsInZone(c, 'p-west').filter((id) => id !== 'H-2');
