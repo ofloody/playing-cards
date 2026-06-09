@@ -19,7 +19,9 @@ export function Card({
         y: t.y - h / 2,
         rotate: t.rotate,
         scale: t.highlight ? 1.06 : 1,
-        opacity: t.dim ? 0.35 : 1,
+        // Dim with a filter, never opacity: transparent cards stack badly in
+        // piles (everything underneath bleeds through the top card).
+        filter: t.dim ? 'saturate(0.3) brightness(0.78)' : 'saturate(1) brightness(1)',
       }}
       transition={{ type: 'spring', stiffness: 120, damping: 18, mass: 0.6, delay: t.delay }}
     >
@@ -80,7 +82,14 @@ export function Card({
             boxShadow: `inset 0 0 0 ${w * 0.08}px #fff, inset 0 0 0 ${w * 0.105}px #000, 3px 3px 0 rgba(0,0,0,0.22)`,
             backgroundSize: `${w * 0.16}px 100%, 100% 100%`,
           }}
-        />
+        >
+          {t.known && (
+            <span className="card-memory" style={{ color: colour, fontSize: w * 0.3 }}>
+              {rank}
+              <span style={{ fontSize: w * 0.26 }}>{GLYPH[suit]}</span>
+            </span>
+          )}
+        </div>
       </motion.div>
     </motion.div>
   );

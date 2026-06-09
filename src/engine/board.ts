@@ -71,3 +71,16 @@ export function flip(board: Board, ids: CardId[], faceUp: boolean): Board {
   for (const id of ids) next.faceUp[id] = faceUp;
   return next;
 }
+
+// Exchanges the {zone, order} placements of two cards; facing stays with each
+// card. The one thing `move` cannot express: putting a card into an EXACT slot
+// of a zone. Layout games use it for replace-in-place (the drawn card takes a
+// layout slot while the old card inherits the drawn card's spot, ready to
+// `move` to the discard) and for blind swaps between two layouts.
+export function swap(board: Board, a: CardId, b: CardId): Board {
+  const next = clone(board);
+  const pa = next.placement[a];
+  next.placement[a] = next.placement[b];
+  next.placement[b] = pa;
+  return next;
+}

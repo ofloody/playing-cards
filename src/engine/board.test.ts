@@ -1,5 +1,5 @@
 import { test, expect } from 'bun:test';
-import { placeAll, cardsInZone, topOf, move, moveToBottom, flip } from './board';
+import { placeAll, cardsInZone, topOf, move, moveToBottom, flip, swap } from './board';
 
 test('placeAll puts cards in a zone in order, all one facing', () => {
   const b = placeAll(['S-A', 'S-2', 'S-3'], 'deck', false);
@@ -42,4 +42,28 @@ test('flip toggles facing without moving', () => {
   const next = flip(b, ['S-A'], true);
   expect(next.faceUp['S-A']).toBe(true);
   expect(cardsInZone(next, 'play')).toEqual(['S-A']);
+});
+
+test('swap exchanges the exact placements of two cards', () => {
+  let b = placeAll(['S-A', 'S-2'], 'layout', false);
+  b = move(b, ['H-9'], 'drawn', { faceUp: true });
+  const next = swap(b, 'H-9', 'S-2');
+  expect(next.placement['H-9']).toEqual({ zone: 'layout', order: 1 }); // exact slot
+  expect(next.placement['S-2']).toEqual({ zone: 'drawn', order: 0 });
+  // facing travels with each card, untouched
+  expect(next.faceUp['H-9']).toBe(true);
+  expect(next.faceUp['S-2']).toBe(false);
+});
+
+test('swap within one zone exchanges orders', () => {
+  const b = placeAll(['S-A', 'S-2'], 'layout', false);
+  const next = swap(b, 'S-A', 'S-2');
+  expect(cardsInZone(next, 'layout')).toEqual(['S-2', 'S-A']);
+});
+
+test('swap is immutable', () => {
+  const b = placeAll(['S-A', 'S-2'], 'layout', false);
+  const next = swap(b, 'S-A', 'S-2');
+  expect(cardsInZone(b, 'layout')).toEqual(['S-A', 'S-2']); // original unchanged
+  expect(next).not.toBe(b);
 });

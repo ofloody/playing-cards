@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ZoneDef } from './types';
 import type { Snapshot } from './runGame';
-import { tableDims, computeTransforms, collapseTransforms, zonePoint } from './layout';
+import { tableDims, computeTransforms, collapseTransforms, zonePoint, gridDrift, gridDriftX } from './layout';
 import { cardsInZone } from './board';
 import { Card } from './Card';
 
@@ -32,6 +32,7 @@ export function CardTable({
         highlight: snapshot.step.highlight,
         spotlight: snapshot.step.spotlight,
         stagger: snapshot.step.stagger ? new Set(snapshot.step.stagger) : undefined,
+        known: snapshot.step.known,
       });
   const ids = Object.keys(snapshot.board.placement);
   const spotlight = snapshot.step.spotlight ? new Set(snapshot.step.spotlight) : null;
@@ -42,17 +43,38 @@ export function CardTable({
       className={`table-felt ${snapshot.step.impact ? 'table-shake' : ''}`}
       style={{ height: dims.height }}
     >
+      {!collapsed && snapshot.step.banner && (
+        <div className="table-banner absolute left-1/2 top-2 -translate-x-1/2">
+          {snapshot.step.banner}
+        </div>
+      )}
       {!collapsed && zones
         .filter((z) => z.label)
         .map((z) => {
-          const { x, y: cy } = zonePoint(z.anchor, dims);
-          const above = z.labelPos === 'above';
-          // Piles creep upward as they grow; hug the player label just past the
-          // topmost card (with a little headroom) so it never sits over a card.
+          const { x: cx, y: cy } = zonePoint(z.anchor, dims);
+          const pos = z.labelPos ?? 'below';
+          const horizontal = pos === 'left' || pos === 'right';
+          // Piles creep upward as they grow; grids extend half a row (and half
+          // a column) both ways. Hug the player label just past the outermost
+          // card (with a little headroom) so it never sits over a card.
           const count = cardsInZone(snapshot.board, z.id).length;
-          const drift = z.layout === 'pile' ? Math.max(0, count - 1) * 0.5 : 0;
-          const gap = dims.cardH * 0.08;
-          const y = above ? cy - dims.cardH / 2 - drift - gap : cy + dims.cardH / 2 + gap;
+          let x = cx;
+          let y = cy;
+          if (horizontal) {
+            const driftX = z.layout === 'grid' ? gridDriftX(z, count, dims) : 0;
+            const gapX = dims.cardW * 0.12;
+            x = cx + (pos === 'right' ? 1 : -1) * (dims.cardW / 2 + driftX + gapX);
+          } else {
+            const driftAbove =
+              z.layout === 'pile' ? Math.max(0, count - 1) * 0.5
+              : z.layout === 'grid' ? gridDrift(z, count, dims)
+              : 0;
+            const driftBelow = z.layout === 'grid' ? gridDrift(z, count, dims) : 0;
+            const gap = dims.cardH * 0.08;
+            y = pos === 'above'
+              ? cy - dims.cardH / 2 - driftAbove - gap
+              : cy + dims.cardH / 2 + driftBelow + gap;
+          }
 
           const dim = spotlight ? !spotlight.has(z.id) : false;
           const status = snapshot.step.status?.[z.id];
@@ -65,20 +87,26 @@ export function CardTable({
           const chip = status && (
             <span className={`zone-label-status ${muted ? 'is-muted' : ''}`}>{status}</span>
           );
+          const chipFirst = pos === 'above' || pos === 'left';
+          const transform = horizontal
+            ? pos === 'left' ? 'translate(-100%, -50%)' : 'translate(0, -50%)'
+            : pos === 'above' ? 'translate(-50%, -100%)' : 'translate(-50%, 0)';
           return (
             <div
               key={`label-${z.id}`}
-              className="table-zone-label absolute pointer-events-none flex flex-col items-center gap-0.5 transition-opacity duration-500"
+              className={`table-zone-label absolute pointer-events-none flex items-center transition-opacity duration-500 ${
+                horizontal ? 'flex-row gap-1.5' : 'flex-col gap-0.5'
+              }`}
               style={{
                 left: x,
                 top: y,
-                transform: above ? 'translate(-50%, -100%)' : 'translate(-50%, 0)',
+                transform,
                 opacity: labelOpacity,
               }}
             >
-              {above && chip}
+              {chipFirst && chip}
               <span className="zone-label-main">{z.label}</span>
-              {!above && chip}
+              {!chipFirst && chip}
             </div>
           );
         })}

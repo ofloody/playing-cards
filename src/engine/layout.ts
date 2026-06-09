@@ -36,6 +36,27 @@ function jitter(id: CardId): number {
   return (h / 100 - 0.5) * 4;
 }
 
+// Column/row pitch of a 'grid' zone: one card plus a thin gutter.
+// zone.gap is the gutter as a fraction of table width (default 0.012).
+function gridSteps(zone: ZoneDef, dims: TableDims): { stepX: number; stepY: number } {
+  const gutter = (zone.gap ?? 0.012) * dims.width;
+  return { stepX: dims.cardW + gutter, stepY: dims.cardH + gutter };
+}
+
+// How far a grid's outer rows extend beyond a single card centred on the
+// anchor. CardTable uses this to keep zone labels clear of the square.
+export function gridDrift(zone: ZoneDef, count: number, dims: TableDims): number {
+  const rows = Math.ceil(Math.max(count, 1) / 2);
+  return ((rows - 1) * gridSteps(zone, dims).stepY) / 2;
+}
+
+// The horizontal counterpart: how far a grid's columns extend beyond a single
+// card centred on the anchor. Used for 'left'/'right' zone labels.
+export function gridDriftX(zone: ZoneDef, count: number, dims: TableDims): number {
+  const cols = Math.min(Math.max(count, 1), 2);
+  return ((cols - 1) * gridSteps(zone, dims).stepX) / 2;
+}
+
 // Seconds of delay added per card index, in a zone that's "staggered" this step.
 const STAGGER_UNIT = 0.09;
 
@@ -59,6 +80,7 @@ export function collapseTransforms(
       z: i,
       highlight: false,
       dim: false,
+      known: false,
       delay: 0,
     };
   });
@@ -69,11 +91,12 @@ export function computeTransforms(
   board: Board,
   zones: ZoneDef[],
   dims: TableDims,
-  opts: { highlight?: CardId[]; spotlight?: string[]; stagger?: Set<string> } = {},
+  opts: { highlight?: CardId[]; spotlight?: string[]; stagger?: Set<string>; known?: CardId[] } = {},
 ): Record<CardId, CardTransform> {
   const result: Record<CardId, CardTransform> = {};
   const highlight = new Set(opts.highlight ?? []);
   const spotlight = opts.spotlight ? new Set(opts.spotlight) : null;
+  const known = new Set(opts.known ?? []);
 
   for (const zone of zones) {
     const cards = cardsInZone(board, zone.id);
@@ -100,6 +123,14 @@ export function computeTransforms(
         const mid = (n - 1) / 2;
         rotate += (i - mid) * 4;
         y = cy + Math.abs(i - mid) * 2;
+      } else if (zone.layout === 'grid') {
+        // Two columns centred on the anchor; order index 0..3 reads
+        // top-left, top-right, bottom-left, bottom-right.
+        const { stepX, stepY } = gridSteps(zone, dims);
+        const cols = 2;
+        const rows = Math.ceil(n / cols);
+        x = cx - ((cols - 1) * stepX) / 2 + (i % cols) * stepX;
+        y = cy - ((rows - 1) * stepY) / 2 + Math.floor(i / cols) * stepY;
       }
 
       result[id] = {
@@ -108,6 +139,7 @@ export function computeTransforms(
         z: i,
         highlight: highlight.has(id),
         dim: dimZone && !highlight.has(id),
+        known: known.has(id),
         delay: staggered ? i * STAGGER_UNIT : 0,
       };
     });
