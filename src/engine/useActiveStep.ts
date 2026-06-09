@@ -1,10 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 
-export function useActiveStep(count: number) {
+export function useActiveStep(count: number, enabled = true) {
   const [active, setActive] = useState(0);
   const refs = useRef<(HTMLElement | null)[]>([]);
 
+  // `enabled` is in the deps so the observer is rebuilt whenever the step panels
+  // are (re)mounted, e.g. after the layout switches to the mobile view and back.
+  // Without this the observer keeps watching the old, detached panel nodes and
+  // `active` gets stuck on whichever step was last seen.
   useEffect(() => {
+    if (!enabled) return;
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -18,7 +23,7 @@ export function useActiveStep(count: number) {
     );
     refs.current.forEach((el) => el && observer.observe(el));
     return () => observer.disconnect();
-  }, [count]);
+  }, [count, enabled]);
 
   const register = (i: number) => (el: HTMLElement | null) => {
     refs.current[i] = el;

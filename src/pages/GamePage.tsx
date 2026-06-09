@@ -24,10 +24,12 @@ export default function GamePage() {
   const { id } = useParams();
   const game = id ? gameMap[id] : undefined;
   const snapshots = useMemo(() => (game ? runGame(game) : []), [game]);
-  const { active, register } = useActiveStep(snapshots.length);
   // The scroll-reveal layout needs the two-column grid (Tailwind `lg`); below
   // that width the tap-driven mobile view is used instead.
   const isMobile = useIsMobile(1024);
+  // Only observe step panels in the desktop layout; passing `!isMobile` rebuilds
+  // the observer when the panels remount after a resize back from mobile.
+  const { active, register } = useActiveStep(snapshots.length, !isMobile);
 
   useEffect(() => {
     window.scrollTo(0, 0);

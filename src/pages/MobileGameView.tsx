@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Game } from '../engine/types';
 import type { Snapshot } from '../engine/runGame';
@@ -14,17 +14,18 @@ export function MobileGameView({
   const [active, setActive] = useState(0);
   const total = snapshots.length;
   const snap = snapshots[active];
-  const instructionsRef = useRef<HTMLDivElement>(null);
 
   const advance = () => setActive((a) => (a + 1) % total);
 
+  // Each step starts at the top so the board is in view; the page (not an inner
+  // box) scrolls to reveal the rest of a long instruction.
   useEffect(() => {
-    instructionsRef.current?.scrollTo({ top: 0, behavior: 'instant' });
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }, [active]);
 
   return (
-    <div className="fixed inset-0 z-30 flex flex-col bg-[#eaf2ff] select-none">
-      <div className="shrink-0 flex items-center justify-between gap-3 border-b-[3px] border-line bg-surface px-4 py-3">
+    <div className="min-h-screen flex flex-col bg-[#eaf2ff] select-none">
+      <div className="sticky top-0 z-10 shrink-0 flex items-center justify-between gap-3 border-b-[3px] border-line bg-surface px-4 py-3">
         <Link to="/" className="bg-ink px-3 py-2 font-display text-[0.65rem] uppercase tracking-widest text-white">
           ← Home
         </Link>
@@ -50,10 +51,10 @@ export function MobileGameView({
         type="button"
         onClick={advance}
         aria-label="Next step"
-        className="flex-1 min-h-0 flex flex-col text-left w-full cursor-pointer focus:outline-none"
+        className="flex-1 flex flex-col text-left w-full cursor-pointer focus:outline-none"
       >
         <div className="shrink-0 px-3 pt-4">
-          <div className="mx-auto max-w-[52rem]">
+          <div className="mx-auto max-w-[32rem]">
             <CardTable snapshot={snap} zones={game.zones} />
           </div>
         </div>
@@ -72,7 +73,7 @@ export function MobileGameView({
           </div>
         </div>
 
-        <div ref={instructionsRef} className="flex-1 min-h-0 overflow-y-auto px-5 pt-1 pb-4">
+        <div className="flex-1 px-5 pt-1 pb-4">
           <article className="border-[3px] border-line bg-surface p-5 shadow-[3px_3px_0_rgba(0,0,0,0.55)]">
             <h2 className="font-display text-3xl uppercase leading-none tracking-[-0.04em] text-ink">
               {snap.step.title}
