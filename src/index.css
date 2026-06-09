@@ -1,32 +1,39 @@
 @import "tailwindcss";
 
 @theme {
-  --font-display: "Fraunces", Georgia, serif;
-  --font-body: "Newsreader", Georgia, serif;
-  --color-paper: #f4f1e9;     /* warm paper background */
-  --color-surface: #ffffff;   /* card faces */
-  --color-table: #dde7de;     /* table baize — tinted so white cards pop */
-  --color-ink: #1d1b16;       /* primary text */
-  --color-ink-soft: #6b6557;  /* secondary text */
-  --color-line: #ddd7c9;      /* hairlines / borders */
-  --color-accent: #1f6b4c;    /* forest-green UI accent */
-  --color-accent-soft: #2f8a64;
-  --color-suit-red: #b3433a;
-  --color-suit-ink: #1d1b16;
+  --font-display: "Arial Black", "Inter Tight", Impact, system-ui, sans-serif;
+  --font-body: Arial, Helvetica, system-ui, sans-serif;
+  --color-paper: #f7f7f2;
+  --color-surface: #ffffff;
+  --color-table: #4388f0;
+  --color-ink: #050505;
+  --color-ink-soft: #5f5f5f;
+  --color-line: #101010;
+  --color-accent: #4388f0;
+  --color-accent-soft: #72a8ff;
+  --color-accent-red: #f04b36;
+  --color-accent-green: #4ab25b;
+  --color-accent-yellow: #ffe14a;
+  --color-suit-red: #f04b36;
+  --color-suit-ink: #050505;
 }
 
 html, body, #root { height: 100%; }
 html { scroll-behavior: smooth; }
 body {
   margin: 0;
-  background: var(--color-paper);
+  background:
+    radial-gradient(#d8d8d8 0.75px, transparent 0.75px),
+    var(--color-paper);
+  background-size: 4px 4px;
   color: var(--color-ink);
   font-family: var(--font-body);
+  font-weight: 400;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-::selection { background: var(--color-accent); color: var(--color-surface); }
+::selection { background: var(--color-accent-yellow); color: var(--color-ink); }
 
 /* ---- Motion vocabulary ---- */
 @keyframes fadeUp {
@@ -41,7 +48,6 @@ body {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
 }
-/* Impact shake for a bomb / revolution landing on the table. */
 @keyframes tableShake {
   0%, 100% { transform: translate(0, 0) rotate(0deg); }
   10% { transform: translate(-5px, 3px) rotate(-0.4deg); }
@@ -52,176 +58,249 @@ body {
   85% { transform: translate(2px, -1px) rotate(0.1deg); }
 }
 .table-shake { animation: tableShake 0.55s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
-.reveal { opacity: 0; animation: fadeUp 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.reveal { opacity: 0; animation: fadeUp 0.65s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
 
-/* ---- Hairline rule with a centred label ---- */
+/* ---- Launchpad-inspired header + marks ---- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: #000;
+  color: #fff;
+  border-bottom: 5px solid #000;
+}
+.brand-lockup {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 7rem;
+  height: 3.25rem;
+  border: 5px solid #fff;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 1.85rem;
+  line-height: 1;
+  letter-spacing: 0.26em;
+  padding-left: 0.26em;
+}
+.site-nav-item {
+  display: grid;
+  gap: 0.6rem;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+.site-nav-item:hover { transform: translateY(-2px); color: var(--color-accent-yellow); }
+.nav-mark { display: block; width: 7rem; height: 0.32rem; }
+.mark-red { background: repeating-linear-gradient(to right, var(--color-accent-red) 0 5px, transparent 5px 10px); }
+.mark-blue { height: 0.45rem; background: radial-gradient(50% 100% at 50% 100%, transparent 42%, var(--color-accent) 44% 58%, transparent 60%) 0 0 / 18px 7px repeat-x; }
+.mark-green { background: repeating-linear-gradient(to right, var(--color-accent-green) 0 3px, transparent 3px 6px); }
+.mark-yellow { background: repeating-linear-gradient(to right, var(--color-accent-yellow) 0 14px, transparent 14px 24px); }
+
+/* ---- Pattern dividers ---- */
 .deco-rule {
   display: flex;
   align-items: center;
-  gap: 0.9rem;
-  color: var(--color-accent);
+  gap: 1.2rem;
+  color: var(--color-ink);
 }
 .deco-rule::before,
 .deco-rule::after {
   content: "";
-  height: 1px;
+  height: 0.45rem;
   flex: 1;
-  background: var(--color-line);
+  background: repeating-linear-gradient(to right, #fff 0 10px, transparent 10px 22px);
 }
-.deco-rule span { font-size: 0.7rem; letter-spacing: 0.2em; }
+.deco-rule span {
+  border: 4px solid currentColor;
+  background: var(--color-surface);
+  padding: 0.45rem 1rem;
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.deco-rule.dark::before,
+.deco-rule.dark::after { background: repeating-linear-gradient(to right, var(--color-line) 0 10px, transparent 10px 22px); }
+.deco-rule.dark span { background: var(--color-paper); }
 
-/* ---- Corner brackets (clean frame) ---- */
 .deco-corners { position: relative; }
 .deco-corners::before,
-.deco-corners::after {
-  content: "";
-  position: absolute;
-  width: 24px;
-  height: 24px;
-  border: 1px solid var(--color-line);
-  pointer-events: none;
-}
-.deco-corners::before { top: -9px; left: -9px; border-right: 0; border-bottom: 0; }
-.deco-corners::after { bottom: -9px; right: -9px; border-left: 0; border-top: 0; }
+.deco-corners::after { display: none; }
 
-/* ---- The hero's fanned hand ---- */
+/* ---- Home hero fanned hand ---- */
 .fan { position: relative; }
 .fan-slot {
   position: absolute;
-  top: 0; left: 50%;
+  top: 50%; left: 50%;
   transform-origin: 50% 130%;
+  transform: translateX(-50%) translateY(-50%) rotate(var(--rot, 0deg)) translateY(var(--fan-lift, 0));
+  transition: transform 0.22s cubic-bezier(0.2, 0.7, 0.2, 1);
   will-change: transform;
+}
+.fan-slot:hover {
+  --fan-lift: -38px;
 }
 .fan-card {
   width: 100%;
   aspect-ratio: 5 / 7;
-  border-radius: 0.55rem;
+  border-radius: 0.7rem;
   background: var(--color-surface);
-  box-shadow: inset 0 0 0 1px var(--color-line), 0 8px 18px -12px rgba(0, 0, 0, 0.4);
+  border: 4px solid var(--color-line);
+  box-shadow: 5px 5px 0 rgba(0,0,0,0.65);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 0.6rem 0.7rem;
+  padding: 0.65rem 0.75rem;
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 900;
   opacity: 0;
   animation: dealIn 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  transition: box-shadow 0.22s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
+.fan-slot:hover .fan-card { box-shadow: 9px 9px 0 rgba(0,0,0,0.7); }
 .fan-card .pip-c { align-self: center; }
 .fan-card .pip-b { align-self: flex-end; transform: rotate(180deg); }
 
-/* ---- Game index cards (home grid) ---- */
+/* ---- Home game modules ---- */
 .game-card {
   position: relative;
   overflow: hidden;
   background: var(--color-surface);
-  transition:
-    transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1),
-    border-color 0.3s,
-    box-shadow 0.35s;
+  border: 5px solid var(--color-line);
+  box-shadow: 5px 5px 0 rgba(0,0,0,0.65);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
 }
 .game-card::after {
-  /* faint suit watermark in line colour */
   content: attr(data-suit);
   position: absolute;
-  right: -0.3rem;
-  bottom: -1.6rem;
-  font-size: 7.5rem;
+  right: -0.45rem;
+  bottom: -2rem;
+  font-size: 9rem;
   line-height: 1;
-  color: var(--color-line);
+  color: color-mix(in srgb, var(--color-accent) 17%, transparent);
   pointer-events: none;
-  transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition: transform 0.28s ease;
 }
-.game-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 30px -16px rgba(0, 0, 0, 0.28);
-}
-.game-card:hover::after { transform: translateY(-6px) rotate(-6deg); }
+.game-card:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 rgba(0,0,0,0.7); }
+.game-card:hover::after { transform: rotate(-7deg) scale(1.05); }
 .card-index {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 900;
   line-height: 0.9;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-/* ---- Game-page progress: a single "2" card that slides down the track ---- */
+/* ---- Progress rail ---- */
 .rail-card {
-  width: 34px;
-  height: 48px;
-  border-radius: 5px;
-  background: var(--color-surface);
-  box-shadow: inset 0 0 0 1px var(--color-line), 0 8px 16px -8px rgba(0, 0, 0, 0.5);
+  width: 36px;
+  height: 50px;
+  border-radius: 0.18rem;
+  background:
+    repeating-linear-gradient(90deg, var(--color-accent-red) 0 5px, #fff 5px 9px),
+    #fff;
+  border: 3px solid #000;
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.7);
   color: var(--color-ink);
+}
+.rail-card::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 2px solid #000;
+  background: rgba(255, 255, 255, 0.72);
 }
 .rail-card .rank {
   position: absolute;
-  top: 3px;
-  left: 5px;
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 12px;
-  line-height: 1;
-}
-.rail-card .pip {
-  position: absolute;
   inset: 0;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 17px;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 12px;
+  line-height: 1;
 }
+.rail-card .pip { display: none; }
 
-/* ===== Table surface (game page) — clean, flat, framed ===== */
+/* ===== Table surface: infographic panel ===== */
 .table-felt {
   position: relative;
   width: 100%;
-  border-radius: 1rem;
+  border-radius: 0;
   overflow: hidden;
-  background: var(--color-table);
-  box-shadow: inset 0 0 0 1px var(--color-line);
+  background:
+    linear-gradient(rgba(255,255,255,0.11) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.11) 1px, transparent 1px),
+    var(--color-table);
+  background-size: 34px 34px;
+  border: 6px solid #fff;
+  box-shadow: 0 0 0 2px #000, 4px 4px 0 rgba(0,0,0,0.55);
 }
-.table-felt::before {
-  /* inner keyline, like a printed diagram border */
-  content: "";
-  position: absolute;
-  inset: 12px;
-  border-radius: 0.7rem;
-  border: 1px solid var(--color-line);
-  pointer-events: none;
-  z-index: 1;
+.table-zone-label { z-index: 2; }
+.zone-label-main {
+  display: inline-block;
+  border: 2px solid #000;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 0.18rem 0.45rem;
+  font-family: var(--font-display);
+  font-size: 0.66rem;
+  line-height: 1;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #000;
+  box-shadow: 1px 1px 0 rgba(0,0,0,0.45);
 }
+.zone-label-status {
+  display: inline-block;
+  border: 2px solid #000;
+  background: var(--color-accent-yellow);
+  padding: 0.12rem 0.35rem;
+  font-family: var(--font-body);
+  font-size: 0.62rem;
+  font-weight: 800;
+  line-height: 1;
+  color: #000;
+}
+.zone-label-status.is-muted { background: #fff; color: var(--color-ink-soft); font-style: italic; }
 
 /* 3D flip */
-.card-inner {
-  position: relative;
-  width: 100%; height: 100%;
-  transform-style: preserve-3d;
-}
+.card-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; }
 .card-face {
   position: absolute; inset: 0;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  border-radius: 0.45rem;
+  border-radius: 0.18rem;
   display: flex;
 }
 .card-front {
   background: var(--color-surface);
-  box-shadow: inset 0 0 0 1px var(--color-line), 0 2px 6px -3px rgba(0, 0, 0, 0.22);
+  border: 2px solid #000;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.22);
 }
 .card-back {
   transform: rotateY(180deg);
-  border-radius: 0.45rem;
-  background: repeating-linear-gradient(
-    45deg,
-    var(--color-accent) 0 7px,
-    color-mix(in srgb, var(--color-accent) 85%, #000) 7px 8px
-  );
-  box-shadow: inset 0 0 0 4px var(--color-surface), inset 0 0 0 5px var(--color-line);
+  border-radius: 0.18rem;
+  border: 2px solid #000;
+  background:
+    linear-gradient(90deg, var(--color-accent-red) 0 50%, transparent 50% 100%),
+    #fff;
+  background-repeat: repeat, no-repeat;
+  box-shadow: inset 0 0 0 6px #fff, inset 0 0 0 8px #000, 3px 3px 0 rgba(0, 0, 0, 0.22);
 }
-.card-glow {
-  box-shadow: 0 0 0 2px var(--color-accent), 0 0 18px 3px rgba(31, 107, 76, 0.35), 0 2px 6px -3px rgba(0, 0, 0, 0.22);
+.card-glow { box-shadow: 0 0 0 4px var(--color-accent-yellow), 4px 4px 0 rgba(0,0,0,0.6); }
+
+@media (max-width: 640px) {
+  .brand-lockup { min-width: 5.5rem; height: 2.6rem; border-width: 4px; font-size: 1.35rem; }
+  .table-felt { border-width: 5px; box-shadow: 0 0 0 2px #000, 4px 4px 0 rgba(0,0,0,0.55); }
+  .zone-label-main { font-size: 0.54rem; padding: 0.14rem 0.32rem; letter-spacing: 0.12em; }
+  .zone-label-status { font-size: 0.52rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
