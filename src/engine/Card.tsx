@@ -30,21 +30,39 @@ export function Card({
       >
         <div
           className={`card-face card-front ${t.highlight ? 'card-glow' : ''}`}
-          style={{
-            color: colour,
-            padding: w * 0.08,
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-          }}
+          style={{ color: colour }}
         >
-          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: w * 0.28, lineHeight: 1 }}>
+          <span
+            style={{
+              position: 'absolute',
+              top: w * 0.09,
+              left: w * 0.09,
+              fontFamily: 'var(--font-display)',
+              fontWeight: 600,
+              fontSize: w * 0.28,
+              lineHeight: 1,
+            }}
+          >
             {rank}
             <span style={{ fontSize: w * 0.24 }}>{GLYPH[suit]}</span>
           </span>
-          <span style={{ alignSelf: 'center', fontSize: w * 0.5 }}>{GLYPH[suit]}</span>
           <span
             style={{
-              alignSelf: 'flex-end',
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              fontSize: w * 0.5,
+              lineHeight: 1,
+            }}
+          >
+            {GLYPH[suit]}
+          </span>
+          <span
+            style={{
+              position: 'absolute',
+              bottom: w * 0.09,
+              right: w * 0.09,
               transform: 'rotate(180deg)',
               fontFamily: 'var(--font-display)',
               fontWeight: 600,
@@ -56,7 +74,13 @@ export function Card({
             <span style={{ fontSize: w * 0.24 }}>{GLYPH[suit]}</span>
           </span>
         </div>
-        <div className="card-face card-back" />
+        <div
+          className="card-face card-back"
+          style={{
+            boxShadow: `inset 0 0 0 ${w * 0.08}px #fff, inset 0 0 0 ${w * 0.105}px #000, 3px 3px 0 rgba(0,0,0,0.22)`,
+            backgroundSize: `${w * 0.16}px 100%, 100% 100%`,
+          }}
+        />
       </motion.div>
     </motion.div>
   );

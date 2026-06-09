@@ -48,7 +48,7 @@ export function move(
 }
 
 // Moves cards to the BOTTOM of `zone` (below every card currently there), so
-// they will be drawn last — e.g. a War winner adding cards under their stock.
+// they will be drawn last, e.g. a War winner adding cards under their stock.
 export function moveToBottom(
   board: Board,
   ids: CardId[],

@@ -45,7 +45,7 @@ test('round 3: the single-2 bomb lands on the jacks and shakes', () => {
   expect(bomb.step.impact).toBe(true);
 });
 
-test('endgame: you go out first, and West is left holding exactly one card — a 2', () => {
+test('endgame: you go out first, and West is left holding exactly one card, a 2', () => {
   const snaps = runGame(president);
   const out = snaps.find((s) => s.step.id === 'out-president')!;
   expect(cardsInZone(out.board, 'p-south')).toEqual([]); // President, out first
