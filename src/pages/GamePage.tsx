@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { gameMap } from '../games';
 import { runGame } from '../engine/runGame';
 import { CardTable } from '../engine/CardTable';
+import { NarrationText } from '../engine/NarrationText';
 import { useActiveStep } from '../engine/useActiveStep';
 import { useIsMobile } from '../engine/useIsMobile';
 import { MobileGameView } from './MobileGameView';
@@ -163,7 +164,7 @@ export default function GamePage() {
             <Link to="/" className="inline-block bg-ink px-4 py-2 font-display text-xs uppercase tracking-widest text-white hover:bg-accent-yellow hover:text-ink">
               ← Handbook
             </Link>
-            <div className="grid grid-cols-3 gap-2 border-[3px] border-line bg-white p-2 font-display text-[0.7rem] uppercase tracking-wide shadow-[3px_3px_0_rgba(0,0,0,0.6)]">
+            <div className="grid grid-cols-3 gap-2 border-[3px] border-line bg-white p-2 font-display text-[0.7rem] uppercase tracking-wide">
               <span className="flex items-center justify-center border-[3px] border-line px-2.5 py-2 text-center leading-tight">{game.players}<br />players</span>
               <span className="flex items-center justify-center border-[3px] border-line px-2.5 py-2 text-center leading-tight">{game.playTime}</span>
               <span className="flex items-center justify-center border-[3px] border-line px-2.5 py-2 text-center leading-tight">{game.difficulty}</span>
@@ -208,11 +209,11 @@ export default function GamePage() {
                       {s.step.title}
                     </h2>
                     <p className="mt-5 text-lg font-semibold leading-relaxed text-ink-soft">
-                      {s.step.narration}
+                      <NarrationText text={s.step.narration} zones={game.zones} />
                     </p>
                     {s.step.callout && (
                       <p className="mt-6 border-l-[6px] border-accent-red bg-paper p-4 text-base leading-relaxed text-ink">
-                        {s.step.callout}
+                        <NarrationText text={s.step.callout} zones={game.zones} />
                       </p>
                     )}
                   </article>

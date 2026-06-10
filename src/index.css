@@ -250,6 +250,15 @@ body {
   box-shadow: 0 0 0 2px #000, 4px 4px 0 rgba(0,0,0,0.55);
 }
 .table-zone-label { z-index: 2; }
+/* A player's name inside narration: bold ink on that player's colour, echoing
+   their label chip on the felt. Clone keeps the mark intact across line wraps. */
+.player-name {
+  padding: 0.05em 0.3em;
+  font-weight: 800;
+  color: var(--color-ink);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
 .zone-label-main {
   display: inline-block;
   border: 2px solid #000;
@@ -315,7 +324,7 @@ body {
   background-repeat: repeat, no-repeat;
   box-shadow: inset 0 0 0 6px #fff, inset 0 0 0 8px #000, 3px 3px 0 rgba(0, 0, 0, 0.22);
 }
-.card-glow { box-shadow: 0 0 0 4px var(--color-accent-yellow), 4px 4px 0 rgba(0,0,0,0.6); }
+.card-glow { box-shadow: 0 0 0 4px var(--color-accent-yellow); }
 /* A face-down card the viewer has seen before: a frosted "memory" of its face
    showing through the back (the x-ray used by memory games like Cabo). */
 .card-memory {

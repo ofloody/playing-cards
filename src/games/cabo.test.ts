@@ -52,14 +52,19 @@ test('a taken discard must enter the square', () => {
   expect(topOf(board, 'discard')).toEqual(['D-5']);
 });
 
-test('the lucky seven peeks the diamond king, then hides it again', () => {
-  const seven = at('lucky-seven');
-  expect(seven.step.impact).toBe(true);
-  expect(seven.board.faceUp['D-K']).toBe(true);
-  expect(seven.board.placement['D-K'].zone).toBe('p-you');
-  const tuck = at('tuck-back').board;
-  expect(tuck.faceUp['D-K']).toBe(false);
-  expect(topOf(tuck, 'discard')).toEqual(['S-7']);
+test('the lucky seven offers the choice, the next step turns the king', () => {
+  // step one of the power: the seven is drawn, nothing is flipped yet
+  const seven = at('lucky-seven').board;
+  expect(cardsInZone(seven, 'drawn')).toEqual(['S-7']);
+  expect(seven.faceUp['D-K']).toBe(false);
+  // step two: the peek itself, king up and the seven spent
+  const peek = at('king-peek');
+  expect(peek.step.impact).toBe(true);
+  expect(peek.board.faceUp['D-K']).toBe(true);
+  expect(peek.board.placement['D-K'].zone).toBe('p-you');
+  expect(topOf(peek.board, 'discard')).toEqual(['S-7']);
+  // and it hides again as the turn passes to Side
+  expect(at('side-peeks-you').board.faceUp['D-K']).toBe(false);
 });
 
 test('the switcheroo trades exact slots between Across and You', () => {
@@ -88,6 +93,24 @@ test('your knock: Side’s six hits the pile, your square refills theirs', () =>
   expect(topOf(knock.board, 'discard', 2)).toEqual(['S-6', 'H-6']);
 });
 
+test('the false knock: the eight bounces back and Side swells to five', () => {
+  const miss = at('false-knock');
+  expect(miss.step.impact).toBe(true);
+  expect(topOf(miss.board, 'discard')).toEqual(['S-8']); // the wrong card, face up for all
+  const pen = at('penalty').board;
+  expect(pen.placement['S-8'].zone).toBe('p-side'); // back exactly where it was
+  expect(pen.faceUp['S-8']).toBe(false);
+  expect(cardsInZone(pen, 'p-side')).toEqual(['H-5', 'C-K', 'C-5', 'S-8', 'S-J']);
+});
+
+test('the flurry: Diagonal baits a four and guts their own square', () => {
+  const flurry = at('flurry-of-fours');
+  expect(flurry.step.impact).toBe(true);
+  // the tossed draw first, then both slams on top
+  expect(topOf(flurry.board, 'discard', 3)).toEqual(['H-4', 'S-4', 'C-4']);
+  expect(cardsInZone(flurry.board, 'p-diagonal')).toEqual(['C-A']);
+});
+
 test('the cabo call shakes the table and names the caller', () => {
   const call = at('cabo');
   expect(call.step.impact).toBe(true);
@@ -105,9 +128,10 @@ test('the last match: Across purges both twos and keeps no refill', () => {
 test('ghosts belong to whoever is acting, and follow swapped cards', () => {
   expect(at('peek-back').step.known).toEqual(['S-A', 'C-6']);
   expect(at('first-replace').step.known).toContain('D-3');
-  expect(at('tuck-back').step.known).toContain('D-K');
-  // on Side's turn you see SIDE's memory, not yours
-  expect(at('decline').step.known).toEqual(['H-5', 'D-9']);
+  expect(at('king-peek').step.known).toContain('D-K');
+  // on Side's turn you see SIDE's memory, not yours: their near row,
+  // the bottom of their square as drawn (they share your edge)
+  expect(at('decline').step.known).toEqual(['D-9', 'S-6']);
   expect(at('side-peeks-you').step.known).toContain('D-3');
   // Diagonal's knock is backed by the three they peeked at the start
   expect(at('knock').step.known).toContain('C-3');
@@ -123,7 +147,7 @@ test('ghosts belong to whoever is acting, and follow swapped cards', () => {
 });
 
 test('the CABO sign hangs over the table for the whole last lap', () => {
-  for (const id of ['cabo', 'side-too-late', 'diagonal-plays-straight', 'last-match']) {
+  for (const id of ['cabo', 'side-too-late', 'flurry-of-fours', 'last-match']) {
     expect(at(id).step.banner).toBeTruthy();
   }
   expect(at('your-knock').step.banner).toBeUndefined();
@@ -139,15 +163,15 @@ test('every turn step has at most one acting player', () => {
   }
 });
 
-test('the reveal: every square face up, and your call holds', () => {
+test('the reveal: every square face up, and Diagonal steals the hand', () => {
   const { board } = at('reveal');
-  expect(cardsInZone(board, 'p-you')).toEqual(['D-3', 'D-K', 'S-A']);         // 3+0+1 = 4
-  expect(cardsInZone(board, 'p-across')).toEqual(['C-9', 'C-6']);             // 9+6 = 15
-  expect(cardsInZone(board, 'p-diagonal')).toEqual(['C-A', 'H-Q', 'C-4']);    // 1+12+4 = 17
-  expect(cardsInZone(board, 'p-side')).toEqual(['H-5', 'C-K', 'C-5', 'S-8']); // 5+13+5+8 = 31
+  expect(cardsInZone(board, 'p-you')).toEqual(['D-3', 'D-K', 'S-A']);  // 3+0+1 = 4
+  expect(cardsInZone(board, 'p-across')).toEqual(['C-9', 'C-6']);      // 9+6 = 15
+  expect(cardsInZone(board, 'p-diagonal')).toEqual(['C-A']);           // 1: the winner
+  expect(cardsInZone(board, 'p-side')).toEqual(['H-5', 'C-K', 'C-5', 'S-8', 'S-J']); // 5+13+5+8+11 = 42
   for (const seat of ['p-you', 'p-side', 'p-diagonal', 'p-across']) {
     for (const id of cardsInZone(board, seat)) expect(board.faceUp[id]).toBe(true);
   }
-  expect(cardsInZone(board, 'stock').length).toBe(20);
-  expect(cardsInZone(board, 'discard').length).toBe(20);
+  expect(cardsInZone(board, 'stock').length).toBe(19);
+  expect(cardsInZone(board, 'discard').length).toBe(22);
 });

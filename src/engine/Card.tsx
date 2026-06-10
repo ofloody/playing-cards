@@ -3,12 +3,20 @@ import type { CardTransform } from './types';
 import { parseCard, isRed } from './deck';
 
 const GLYPH: Record<string, string> = { S: '♠', H: '♥', D: '♦', C: '♣' };
+export const FLIP_SECONDS = 0.5;
 
 export function Card({
   id, t, w, h,
 }: { id: string; t: CardTransform; w: number; h: number }) {
   const { suit, rank } = parseCard(id);
   const colour = isRed(suit) ? 'var(--color-suit-red)' : 'var(--color-suit-ink)';
+
+  // CardTable choreographs multi-beat steps via moveDelay/flipDelay (e.g. a
+  // kept card flips face down in place before everything travels together).
+  const spring = { type: 'spring', stiffness: 120, damping: 18, mass: 0.6 } as const;
+  const moveDelay = t.moveDelay ?? t.delay;
+  const flipDelay = t.flipDelay ?? t.delay;
+
   return (
     <motion.div
       className="absolute left-0 top-0 will-change-transform"
@@ -23,12 +31,16 @@ export function Card({
         // piles (everything underneath bleeds through the top card).
         filter: t.dim ? 'saturate(0.3) brightness(0.78)' : 'saturate(1) brightness(1)',
       }}
-      transition={{ type: 'spring', stiffness: 120, damping: 18, mass: 0.6, delay: t.delay }}
+      transition={{
+        default: { ...spring, delay: moveDelay },
+        scale: { ...spring, delay: t.delay },
+        filter: { duration: 0.3, delay: t.delay },
+      }}
     >
       <motion.div
         className="card-inner"
         animate={{ rotateY: t.faceUp ? 0 : 180 }}
-        transition={{ duration: 0.5, ease: 'easeInOut', delay: t.delay }}
+        transition={{ duration: FLIP_SECONDS, ease: 'easeInOut', delay: flipDelay }}
       >
         <div
           className={`card-face card-front ${t.highlight ? 'card-glow' : ''}`}

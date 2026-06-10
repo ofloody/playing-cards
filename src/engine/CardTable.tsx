@@ -3,7 +3,7 @@ import type { ZoneDef } from './types';
 import type { Snapshot } from './runGame';
 import { tableDims, computeTransforms, collapseTransforms, zonePoint, gridDrift, gridDriftX } from './layout';
 import { cardsInZone } from './board';
-import { Card } from './Card';
+import { Card, FLIP_SECONDS } from './Card';
 
 export function CardTable({
   snapshot,
@@ -36,6 +36,37 @@ export function CardTable({
       });
   const ids = Object.keys(snapshot.board.placement);
   const spotlight = snapshot.step.spotlight ? new Set(snapshot.step.spotlight) : null;
+
+  // Choreograph multi-beat steps. When a card turns face DOWN and travels in
+  // the same step (a kept draw heading into a square), it conceals first: its
+  // flip plays in place, and EVERY travelling card in the step (the kept card
+  // and whatever it displaces) waits for that flip, then sets off together.
+  // Reveals still flip in flight alongside their move.
+  const prevBoardRef = useRef(snapshot.board);
+  const prevBoard = prevBoardRef.current;
+  useEffect(() => {
+    prevBoardRef.current = snapshot.board;
+  }, [snapshot.board]);
+  if (!collapsed && prevBoard !== snapshot.board) {
+    const moved = (id: string) => {
+      const a = prevBoard.placement[id];
+      const b = snapshot.board.placement[id];
+      return !!a && !!b && (a.zone !== b.zone || a.order !== b.order);
+    };
+    const conceals = (id: string) =>
+      (prevBoard.faceUp[id] ?? false) && !(snapshot.board.faceUp[id] ?? false);
+    const movedIds = ids.filter(moved);
+    if (movedIds.some(conceals)) {
+      for (const id of movedIds) {
+        const t = transforms[id];
+        transforms[id] = {
+          ...t,
+          moveDelay: t.delay + FLIP_SECONDS,
+          flipDelay: conceals(id) ? t.delay : t.delay + FLIP_SECONDS,
+        };
+      }
+    }
+  }
 
   return (
     <div
@@ -82,20 +113,32 @@ export function CardTable({
           // A seat carrying a status word stays legible even when its cards are dimmed.
           const labelOpacity = status ? 0.95 : dim ? 0.4 : 0.9;
 
-          // The player label hugs the cards; its status chip sits just beyond it,
-          // on the far side of the label (away from the cards) so nothing overlaps.
+          // The player label hugs the cards. On a side-positioned seat the
+          // name stays centred on its card rows and the status chip is lifted
+          // out of flow, perched just above the name (sharing its card-side
+          // edge) so its arrival never nudges the name. A vertically-
+          // positioned label keeps the chip in flow on the far side of the
+          // name (away from the cards) so nothing overlaps.
           const chip = status && (
             <span className={`zone-label-status ${muted ? 'is-muted' : ''}`}>{status}</span>
           );
-          const chipFirst = pos === 'above' || pos === 'left';
+          const chipFirst = pos === 'above';
           const transform = horizontal
             ? pos === 'left' ? 'translate(-100%, -50%)' : 'translate(0, -50%)'
             : pos === 'above' ? 'translate(-50%, -100%)' : 'translate(-50%, 0)';
+          const name = (
+            <span
+              className="zone-label-main"
+              style={z.labelColor ? { background: z.labelColor } : undefined}
+            >
+              {z.label}
+            </span>
+          );
           return (
             <div
               key={`label-${z.id}`}
-              className={`table-zone-label absolute pointer-events-none flex items-center transition-opacity duration-500 ${
-                horizontal ? 'flex-row gap-1.5' : 'flex-col gap-0.5'
+              className={`table-zone-label absolute pointer-events-none transition-opacity duration-500 ${
+                horizontal ? '' : 'flex flex-col items-center gap-0.5'
               }`}
               style={{
                 left: x,
@@ -104,9 +147,26 @@ export function CardTable({
                 opacity: labelOpacity,
               }}
             >
-              {chipFirst && chip}
-              <span className="zone-label-main">{z.label}</span>
-              {!chipFirst && chip}
+              {horizontal ? (
+                <>
+                  {chip && (
+                    <span
+                      className={`absolute bottom-full mb-1 whitespace-nowrap ${
+                        pos === 'left' ? 'right-0' : 'left-0'
+                      }`}
+                    >
+                      {chip}
+                    </span>
+                  )}
+                  {name}
+                </>
+              ) : (
+                <>
+                  {chipFirst && chip}
+                  {name}
+                  {!chipFirst && chip}
+                </>
+              )}
             </div>
           );
         })}
