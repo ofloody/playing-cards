@@ -63,7 +63,7 @@ export const war: Game = {
       id: 'compare',
       title: 'High card wins',
       narration:
-        'Compare ranks. Aces are high, twos are low; suits never matter. The Ace beats the Nine, so Player 1 wins the battle.',
+        'Compare ranks. Aces are high, twos are low; suits never matter. The ace of spades beats the nine of hearts, so Player 1 wins the battle.',
       callout: 'Rank order, low → high: 2 3 4 5 6 7 8 9 10 J Q K A.',
       apply: (b) => b,
       highlight: ['S-A'],
@@ -82,7 +82,7 @@ export const war: Game = {
       id: 'tie',
       title: 'A tie means War!',
       narration:
-        'When the two flipped cards are equal in rank, it is War. Here both players turn a Five. The tied cards stay on the table and the war begins.',
+        'When the two flipped cards are equal in rank, it is War. Here both players turn a five: the five of spades against the five of clubs. The tied cards stay on the table and the war begins.',
       apply: (b) => {
         let n = move(b, ['S-5'], 'p1-play', { faceUp: true });
         n = move(n, ['C-5'], 'p2-play', { faceUp: true });
@@ -110,7 +110,7 @@ export const war: Game = {
       id: 'war-win',
       title: 'Winner sweeps the pile',
       narration:
-        'The higher new face-up card wins every card in the war, all six this time. The King beats the Three, so Player 1 sweeps the lot straight to the bottom of their stock, face-down.',
+        'The higher new face-up card wins every card in the war, all six this time. The king of spades beats the three of clubs, so Player 1 sweeps the lot straight to the bottom of their stock, face-down.',
       apply: (b) =>
         moveToBottom(
           b,

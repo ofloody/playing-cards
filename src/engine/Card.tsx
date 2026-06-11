@@ -1,4 +1,4 @@
-import { motion } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import type { CardTransform } from './types';
 import { parseCard, isRed } from './deck';
 
@@ -20,16 +20,21 @@ export function Card({
   return (
     <motion.div
       className="absolute left-0 top-0 will-change-transform"
-      style={{ width: w, height: h, zIndex: (t.highlight ? 1000 : 0) + t.z }}
+      style={{ width: w, height: h, zIndex: (t.highlight || t.peek ? 1000 : 0) + t.z }}
       initial={false}
       animate={{
         x: t.x - w / 2,
-        y: t.y - h / 2,
+        y: t.y - h / 2 - (t.peek ? h * 0.07 : 0),
         rotate: t.rotate,
-        scale: t.highlight ? 1.06 : 1,
+        scale: t.peek ? 1.12 : t.highlight ? 1.06 : 1,
         // Dim with a filter, never opacity: transparent cards stack badly in
         // piles (everything underneath bleeds through the top card).
-        filter: t.dim ? 'saturate(0.3) brightness(0.78)' : 'saturate(1) brightness(1)',
+        // A peeked card instead lifts off the felt on a deep drop shadow.
+        filter: t.dim
+          ? 'saturate(0.3) brightness(0.78)'
+          : t.peek
+            ? 'saturate(1) brightness(1) drop-shadow(0 8px 7px rgba(0,0,0,0.38))'
+            : 'saturate(1) brightness(1)',
       }}
       transition={{
         default: { ...spring, delay: moveDelay },
@@ -88,21 +93,111 @@ export function Card({
             <span style={{ fontSize: w * 0.24 }}>{GLYPH[suit]}</span>
           </span>
         </div>
-        <div
+        <motion.div
           className="card-face card-back"
           style={{
             boxShadow: `inset 0 0 0 ${w * 0.08}px #fff, inset 0 0 0 ${w * 0.105}px #000, 3px 3px 0 rgba(0,0,0,0.22)`,
             backgroundSize: `${w * 0.16}px 100%, 100% 100%`,
           }}
+          initial={false}
+          // While the peek proxy is airborne, the real back is gone from the
+          // table: clip it away the instant the proxy (which renders an
+          // identical back) starts lifting, and restore it just before the
+          // proxy settles flat again.
+          animate={{ clipPath: t.peek ? 'inset(0 0 100% 0)' : 'inset(0 0 0% 0)' }}
+          transition={{
+            duration: 0.01,
+            delay: t.peek ? t.delay : t.delay + FLIP_SECONDS * 0.85,
+          }}
         >
-          {t.known && (
+          {/* The memory ghost waits until the glance is over: while the card
+              is lifted for a peek, the reveal flap is the only face showing. */}
+          {t.known && !t.peek && (
             <span className="card-memory" style={{ color: colour, fontSize: w * 0.3 }}>
               {rank}
               <span style={{ fontSize: w * 0.26 }}>{GLYPH[suit]}</span>
             </span>
           )}
-        </div>
+        </motion.div>
       </motion.div>
+      {/* The peek: a private glance. The whole card, rigid, lifts off the felt
+          by its bottom edge (the near edge swelling with perspective) and bends
+          back over its top edge to show its face. The card never counts as
+          face up, and the proxy exists only while its card is peeked: every
+          other card stays a single unsplit element. */}
+      <AnimatePresence>
+        {t.peek && (
+          <div className="card-peek-hinge">
+            <motion.div
+              className="card-peek-flap"
+              initial={{ rotateX: 0 }}
+              animate={{ rotateX: 135 }}
+              exit={{ rotateX: 0 }}
+              transition={{ duration: FLIP_SECONDS, ease: 'easeInOut', delay: t.delay }}
+            >
+              {/* what the table sees: the card back, lifting away */}
+              <div className="card-peek-flap-side">
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    borderRadius: '0.18rem',
+                    background:
+                      'linear-gradient(90deg, var(--color-accent-red) 0 50%, transparent 50% 100%), #fff',
+                    backgroundRepeat: 'repeat, no-repeat',
+                    backgroundSize: `${w * 0.16}px 100%, 100% 100%`,
+                    boxShadow: `inset 0 0 0 2px #000, inset 0 0 0 ${w * 0.08}px #fff, inset 0 0 0 ${w * 0.105}px #000`,
+                  }}
+                />
+              </div>
+              {/* what the peeker sees: the actual face on the underside */}
+              <div className="card-peek-flap-side card-peek-flap-underside" style={{ color: colour }}>
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: w * 0.09,
+                    left: w * 0.09,
+                    fontFamily: 'var(--font-display)',
+                    fontWeight: 600,
+                    fontSize: w * 0.28,
+                    lineHeight: 1,
+                  }}
+                >
+                  {rank}
+                  <span style={{ fontSize: w * 0.24 }}>{GLYPH[suit]}</span>
+                </span>
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    fontSize: w * 0.5,
+                    lineHeight: 1,
+                  }}
+                >
+                  {GLYPH[suit]}
+                </span>
+                <span
+                  style={{
+                    position: 'absolute',
+                    bottom: w * 0.09,
+                    right: w * 0.09,
+                    transform: 'rotate(180deg)',
+                    fontFamily: 'var(--font-display)',
+                    fontWeight: 600,
+                    fontSize: w * 0.28,
+                    lineHeight: 1,
+                  }}
+                >
+                  {rank}
+                  <span style={{ fontSize: w * 0.24 }}>{GLYPH[suit]}</span>
+                </span>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

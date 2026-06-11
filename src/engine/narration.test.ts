@@ -57,4 +57,47 @@ describe('segmentNarration', () => {
     const named = segs.filter((s) => s.color);
     expect(named.map((s) => s.text)).toEqual(['You', 'Across', 'Diagonal', 'Side']);
   });
+
+  test('marks "rank of suit" card phrases with rank, glyph and colour', () => {
+    const segs = segmentNarration('You draw a three of diamonds.', SEATS);
+    expect(segs).toEqual([
+      { text: 'You', color: '#ffe14a' },
+      { text: ' draw a ' },
+      { text: 'three of diamonds', card: { rank: '3', suit: '♦', red: true } },
+      { text: '.' },
+    ]);
+  });
+
+  test('reads ten as 10, courts as letters, and clubs/spades as black', () => {
+    const ten = segmentNarration('a ten of clubs', []);
+    expect(ten.at(-1)?.card).toEqual({ rank: '10', suit: '♣', red: false });
+    const king = segmentNarration('the king of spades', []);
+    expect(king.at(-1)?.card).toEqual({ rank: 'K', suit: '♠', red: false });
+  });
+
+  test('detects cards even when no zone carries a colour', () => {
+    const segs = segmentNarration('She flips the ace of hearts over.', []);
+    expect(segs).toEqual([
+      { text: 'She flips the ' },
+      { text: 'ace of hearts', card: { rank: 'A', suit: '♥', red: true } },
+      { text: ' over.' },
+    ]);
+  });
+
+  test('catches the literal shorthand form, like "3♣" and "10♥"', () => {
+    const segs = segmentNarration('whoever was dealt the 3♣ leads it', []);
+    expect(segs).toEqual([
+      { text: 'whoever was dealt the ' },
+      { text: '3♣', card: { rank: '3', suit: '♣', red: false } },
+      { text: ' leads it' },
+    ]);
+    const ten = segmentNarration('the 10♥ wins', []);
+    expect(ten[1].card).toEqual({ rank: '10', suit: '♥', red: true });
+  });
+
+  test('leaves bare ranks and counts alone (no suit, no badge)', () => {
+    expect(segmentNarration('down to two cards in a two-by-two square', [])).toEqual([
+      { text: 'down to two cards in a two-by-two square' },
+    ]);
+  });
 });

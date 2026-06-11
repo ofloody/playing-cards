@@ -81,6 +81,7 @@ export function collapseTransforms(
       highlight: false,
       dim: false,
       known: false,
+      peek: false,
       delay: 0,
     };
   });
@@ -91,12 +92,13 @@ export function computeTransforms(
   board: Board,
   zones: ZoneDef[],
   dims: TableDims,
-  opts: { highlight?: CardId[]; spotlight?: string[]; stagger?: Set<string>; known?: CardId[] } = {},
+  opts: { highlight?: CardId[]; spotlight?: string[]; stagger?: Set<string>; known?: CardId[]; peek?: CardId[] } = {},
 ): Record<CardId, CardTransform> {
   const result: Record<CardId, CardTransform> = {};
   const highlight = new Set(opts.highlight ?? []);
   const spotlight = opts.spotlight ? new Set(opts.spotlight) : null;
   const known = new Set(opts.known ?? []);
+  const peek = new Set(opts.peek ?? []);
 
   for (const zone of zones) {
     const cards = cardsInZone(board, zone.id);
@@ -140,6 +142,7 @@ export function computeTransforms(
         highlight: highlight.has(id),
         dim: dimZone && !highlight.has(id),
         known: known.has(id),
+        peek: peek.has(id),
         delay: staggered ? i * STAGGER_UNIT : 0,
       };
     });

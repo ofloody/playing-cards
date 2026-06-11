@@ -33,6 +33,7 @@ export function CardTable({
         spotlight: snapshot.step.spotlight,
         stagger: snapshot.step.stagger ? new Set(snapshot.step.stagger) : undefined,
         known: snapshot.step.known,
+        peek: snapshot.step.peek,
       });
   const ids = Object.keys(snapshot.board.placement);
   const spotlight = snapshot.step.spotlight ? new Set(snapshot.step.spotlight) : null;

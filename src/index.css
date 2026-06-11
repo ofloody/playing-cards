@@ -94,7 +94,7 @@ body {
   transition: transform 0.2s ease, color 0.2s ease;
 }
 .site-nav-item:hover { transform: translateY(-2px); color: var(--color-accent-yellow); }
-.nav-mark { display: block; width: 7rem; height: 0.32rem; }
+.nav-mark { display: block; width: 100%; height: 0.32rem; }
 .mark-red { background: repeating-linear-gradient(to right, var(--color-accent-red) 0 5px, transparent 5px 10px); }
 .mark-blue { height: 0.45rem; background: radial-gradient(50% 100% at 50% 100%, transparent 42%, var(--color-accent) 44% 58%, transparent 60%) 0 0 / 18px 7px repeat-x; }
 .mark-green { background: repeating-linear-gradient(to right, var(--color-accent-green) 0 3px, transparent 3px 6px); }
@@ -259,6 +259,18 @@ body {
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 }
+.card-ref {
+  font-weight: 800;
+  white-space: nowrap;
+  color: var(--color-suit-ink);
+}
+.card-ref[data-red='true'] {
+  color: var(--color-suit-red);
+}
+.card-ref-suit {
+  margin-left: 0.04em;
+  font-size: 0.92em;
+}
 .zone-label-main {
   display: inline-block;
   border: 2px solid #000;
@@ -327,6 +339,34 @@ body {
 .card-glow { box-shadow: 0 0 0 4px var(--color-accent-yellow); }
 /* A face-down card the viewer has seen before: a frosted "memory" of its face
    showing through the back (the x-ray used by memory games like Cabo). */
+/* The peek reveal: the whole card, rigid and uncreased, lifts off the felt
+   by its bottom edge (perspective swells the near edge) and bends back over
+   its top edge, showing the face on the underside for a private glance. */
+.card-peek-hinge {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  perspective: 600px;
+}
+.card-peek-flap {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform-origin: top center;
+}
+.card-peek-flap-side {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 0.18rem;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.card-peek-flap-underside {
+  background: var(--color-surface);
+  border: 2px solid #000;
+  transform: rotateX(180deg);
+}
 .card-memory {
   margin: auto;
   padding: 0.06rem 0.2rem;

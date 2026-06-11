@@ -42,6 +42,7 @@ export interface CardTransform {
   highlight: boolean;
   dim: boolean;
   known: boolean; // face-down card the viewer has seen; shows a ghosted face on its back
+  peek: boolean; // card lifted off the table this step, top half revealed (a private glance)
   delay: number; // seconds to delay this card's move (for staggered "fast-forward" plays)
   moveDelay?: number; // choreography override: when the travel should start (defaults to delay)
   flipDelay?: number; // choreography override: when the flip should start (defaults to delay)
@@ -61,6 +62,8 @@ export interface Step {
   stagger?: string[]; // zone ids whose cards arrive one-by-one (fast-forward play feel)
   known?: CardId[]; // face-down cards the viewer has seen and should remember;
   // each renders a ghosted face on its back (memory-game x-ray)
+  peek?: CardId[]; // cards privately glanced at this step: each lifts off the
+  // table and shows the top half of its face, while staying face down on the board
   banner?: string; // short sign pinned top-centre of the felt while this step shows
 }
 
