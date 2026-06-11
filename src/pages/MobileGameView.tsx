@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import type { Game } from '../engine/types';
 import type { Snapshot } from '../engine/runGame';
 import { CardTable } from '../engine/CardTable';
+import { NarrationText } from '../engine/NarrationText';
 
 export function MobileGameView({
   game,
@@ -79,11 +80,11 @@ export function MobileGameView({
               {snap.step.title}
             </h2>
             <p className="mt-4 text-base font-semibold leading-relaxed text-ink-soft">
-              {snap.step.narration}
+              <NarrationText text={snap.step.narration} zones={game.zones} />
             </p>
             {snap.step.callout && (
               <p className="mt-4 border-l-[6px] border-accent-red bg-paper p-3 text-[0.95rem] leading-relaxed text-ink">
-                {snap.step.callout}
+                <NarrationText text={snap.step.callout} zones={game.zones} />
               </p>
             )}
           </article>

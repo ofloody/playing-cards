@@ -39,14 +39,16 @@ export default function Home() {
   return (
     <main>
         <section id="about" className="mx-auto max-w-6xl px-6 pb-12 pt-14 md:pt-20">
-          <div className="reveal inline-block border-[5px] border-line bg-surface px-4 py-2 font-display text-3xl uppercase tracking-[0.22em] shadow-[4px_4px_0_rgba(0,0,0,0.65)] md:text-5xl">
-            Card Guide
-          </div>
+          <div className="inline-block">
+            <div className="reveal border-[5px] border-line bg-surface px-4 py-2 text-center font-display text-3xl uppercase tracking-[0.22em] shadow-[4px_4px_0_rgba(0,0,0,0.65)] md:text-5xl">
+              Card Guide
+            </div>
 
-          <div className="reveal mt-10 flex flex-wrap items-center gap-x-8 gap-y-4" aria-hidden="true" style={{ animationDelay: '0.08s' }}>
-            {MARKS.map((mark) => (
-              <span key={mark} className={`nav-mark ${mark}`} />
-            ))}
+            <div className="reveal mt-10 grid grid-cols-2 items-center gap-x-6 gap-y-4 md:grid-cols-4" aria-hidden="true" style={{ animationDelay: '0.08s' }}>
+              {MARKS.map((mark) => (
+                <span key={mark} className={`nav-mark ${mark}`} />
+              ))}
+            </div>
           </div>
         </section>
 

@@ -107,7 +107,7 @@ As the game has spread, numerous variations have developed. I will describe a ty
       title: 'Round 1: lead a card',
       status: { 'p-south': 'starts' },
       narration:
-        'You lead the first round. A lead can be a single card or a set of equal rank: a pair, a triple, even four of a kind. You ease in with a single five.',
+        'You lead the first round. A lead can be a single card or a set of equal rank: a pair, a triple, even four of a kind. You ease in with a single card, the five of spades.',
       callout: 'Small-set rule: on singles and pairs you may also play the exact same rank, not only a higher one, so a 9 can answer a 9. (Triples and bigger must be beaten outright.)',
       apply: (b) => move(b, ['S-5'], 'trick', { faceUp: true }),
       highlight: ['S-5'],
@@ -118,7 +118,7 @@ As the game has spread, numerous variations have developed. I will describe a ty
       title: 'Each player climbs or passes',
       status: { 'p-west': 'plays', 'p-north': 'plays', 'p-east': 'plays' },
       narration:
-        'Going clockwise, each player must beat what’s on top with a higher card of the same count, or pass. West drops an eight, North a ten, East a queen. The queen comes back around to you.',
+        'Going clockwise, each player must beat what’s on top with a higher card of the same count, or pass. West drops an eight of diamonds, North a ten of clubs, East a queen of hearts. The queen comes back around to you.',
       apply: (b) => {
         let n = move(b, ['D-8'], 'trick', { faceUp: true });
         n = move(n, ['C-10'], 'trick', { faceUp: true });
@@ -132,7 +132,7 @@ As the game has spread, numerous variations have developed. I will describe a ty
       id: 'r1-king',
       title: 'You top it with a king',
       status: { 'p-south': 'plays' },
-      narration: 'It’s your turn again, and you climb over the queen with a king.',
+      narration: 'It’s your turn again, and you climb over the queen with the king of spades.',
       apply: (b) => move(b, ['S-K'], 'trick', { faceUp: true }),
       highlight: ['S-K'],
       spotlight: ['trick', 'p-south'],
@@ -219,7 +219,7 @@ As the game has spread, numerous variations have developed. I will describe a ty
       status: { 'p-south': 'bomb!' },
       impact: true,
       narration:
-        'No higher pair? No problem. You hold the one true bomb in the game: a single 2. A lone 2 beats absolutely any play, even a pair of jacks, and the table jolts as it lands. The catch, and the very reason it’s a bomb: you can never finish on a 2. Get caught holding one as your last card and you’re automatically the Bum, so you spend your twos while you safely can. Down it goes.',
+        'No higher pair? No problem. You hold the one true bomb in the game: a single 2. A lone 2 beats absolutely any play, even a pair of jacks, and the table jolts as it lands. The catch, and the very reason it’s a bomb: you can never finish on a 2. Get caught holding one as your last card and you’re automatically the Bum, so you spend your twos while you safely can. Down goes the two of spades.',
       apply: (b) => move(b, ['S-2'], 'trick', { faceUp: true }),
       highlight: ['S-2'],
       spotlight: ['trick'],
@@ -250,7 +250,7 @@ As the game has spread, numerous variations have developed. I will describe a ty
       impact: true,
       stagger: ['middle'],
       narration:
-        'Now watch West. The play fast-forwards: West fires card after card into the middle and races all the way down to a single card, closer to going out than anyone left and about to grab second place. But that last card is a 2, and you can never go out on a 2. The moment they’re down to it the bomb goes off in their hand; there’s nothing else to play and no one can clear it off for them, so right there, in an instant, West drops from nearly-second all the way to the bottom: the Bum.',
+        'Now watch West. The play fast-forwards: West fires card after card into the middle and races all the way down to a single card, closer to going out than anyone left and about to grab second place. But that last card is the two of hearts, and you can never go out on a 2. The moment they’re down to it the bomb goes off in their hand; there’s nothing else to play and no one can clear it off for them, so right there, in an instant, West drops from nearly-second all the way to the bottom: the Bum.',
       apply: (b) => {
         const c = clear(b);
         const others = cardsInZone(c, 'p-west').filter((id) => id !== 'H-2');
@@ -300,7 +300,7 @@ As the game has spread, numerous variations have developed. I will describe a ty
       title: 'The trade: rank has its privileges',
       status: { 'p-south': 'Prez', 'p-north': 'V.P.', 'p-east': 'V.Bum', 'p-west': 'Bum' },
       narration:
-        'Before a card is led, the losers pay tribute up the ladder. The Bum hands the President their two highest cards, and in return the President sends two cards straight back down to West, here a throwaway 3 and 4 that land in the Bum’s hand. The Vice-Bum and Vice-President swap one card each the same way. Best cards flow up, unwanted ones trickle back down: the rich get richer, and the Bum digs out from the bottom all over again.',
+        'Before a card is led, the losers pay tribute up the ladder. The Bum hands the President their two highest cards, the two of hearts and the ace of hearts, and in return the President sends two cards straight back down to West, a throwaway three of spades and four of spades that land in the Bum’s hand. The Vice-Bum and Vice-President swap one card each the same way. Best cards flow up, unwanted ones trickle back down: the rich get richer, and the Bum digs out from the bottom all over again.',
       callout:
         'It’s a two-way swap: President ↔ Bum trade two cards each, Vice-President ↔ Vice-Bum one each.',
       apply: (b) => {
