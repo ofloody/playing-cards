@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react';
+import { useEffect, useRef } from 'react';
 import type { CardTransform } from './types';
 import { parseCard, isRed } from './deck';
 
@@ -16,6 +17,14 @@ export function Card({
   const spring = { type: 'spring', stiffness: 120, damping: 18, mass: 0.6 } as const;
   const moveDelay = t.moveDelay ?? t.delay;
   const flipDelay = t.flipDelay ?? t.delay;
+
+  // Whether this card's peek flap is mid-descent: the memory ghost it leaves
+  // behind waits for the flap to land before fading in.
+  const prevPeek = useRef(false);
+  const peekJustEnded = prevPeek.current && !t.peek;
+  useEffect(() => {
+    prevPeek.current = t.peek;
+  }, [t.peek]);
 
   return (
     <motion.div
@@ -100,57 +109,76 @@ export function Card({
             backgroundSize: `${w * 0.16}px 100%, 100% 100%`,
           }}
           initial={false}
-          // While the peek proxy is airborne, the real back is gone from the
-          // table: clip it away the instant the proxy (which renders an
-          // identical back) starts lifting, and restore it just before the
-          // proxy settles flat again.
-          animate={{ clipPath: t.peek ? 'inset(0 0 100% 0)' : 'inset(0 0 0% 0)' }}
+          // While the peek flap is bent up, the card's bottom half is gone
+          // from the table: clip it away the instant the flap (which renders
+          // an identical bottom slice of the back) starts lifting, and restore
+          // it just before the flap settles flat again.
+          animate={{ clipPath: t.peek ? 'inset(0 0 50% 0)' : 'inset(0 0 0% 0)' }}
           transition={{
             duration: 0.01,
             delay: t.peek ? t.delay : t.delay + FLIP_SECONDS * 0.85,
           }}
         >
           {/* The memory ghost waits until the glance is over: while the card
-              is lifted for a peek, the reveal flap is the only face showing. */}
+              is lifted for a peek, the reveal flap is the only face showing,
+              and the ghost fades in only once the flap has settled flat. */}
           {t.known && !t.peek && (
-            <span className="card-memory" style={{ color: colour, fontSize: w * 0.3 }}>
+            <motion.span
+              className="card-memory"
+              style={{ color: colour, fontSize: w * 0.3 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{
+                duration: 0.3,
+                delay: peekJustEnded ? FLIP_SECONDS * 0.9 : 0,
+              }}
+            >
               {rank}
               <span style={{ fontSize: w * 0.26 }}>{GLYPH[suit]}</span>
-            </span>
+            </motion.span>
           )}
         </motion.div>
       </motion.div>
-      {/* The peek: a private glance. The whole card, rigid, lifts off the felt
-          by its bottom edge (the near edge swelling with perspective) and bends
-          back over its top edge to show its face. The card never counts as
-          face up, and the proxy exists only while its card is peeked: every
-          other card stays a single unsplit element. */}
+      {/* The peek: a private glance. The card bends at its waist: the bottom
+          half lifts off the felt (the near edge swelling with perspective) and
+          folds back, showing the face on its underside, index in the corner
+          and the centre pip cut at the fold, like a real card bent for a look.
+          The card never counts as face up, and the flap exists only while its
+          card is peeked: every other card stays a single unsplit element. */}
       <AnimatePresence>
         {t.peek && (
           <div className="card-peek-hinge">
             <motion.div
               className="card-peek-flap"
-              initial={{ rotateX: 0 }}
-              animate={{ rotateX: 135 }}
-              exit={{ rotateX: 0 }}
+              initial={{ rotateX: 0, y: 0 }}
+              // the slight downward nudge tucks the folded flap over the cut
+              // edge of the clipped back, so no seam peeks out beneath it
+              animate={{ rotateX: 140, y: h * 0.05 }}
+              exit={{ rotateX: 0, y: 0 }}
               transition={{ duration: FLIP_SECONDS, ease: 'easeInOut', delay: t.delay }}
             >
-              {/* what the table sees: the card back, lifting away */}
+              {/* what the table sees: the bottom slice of the back, lifting away */}
               <div className="card-peek-flap-side">
+                {/* an exact replica of the real card back, so the lifting
+                    slice is indistinguishable from the card it came off */}
                 <div
                   style={{
                     position: 'absolute',
-                    inset: 0,
+                    left: 0,
+                    top: '-100%',
+                    width: '100%',
+                    height: '200%',
                     borderRadius: '0.18rem',
+                    border: '2px solid #000',
                     background:
                       'linear-gradient(90deg, var(--color-accent-red) 0 50%, transparent 50% 100%), #fff',
                     backgroundRepeat: 'repeat, no-repeat',
                     backgroundSize: `${w * 0.16}px 100%, 100% 100%`,
-                    boxShadow: `inset 0 0 0 2px #000, inset 0 0 0 ${w * 0.08}px #fff, inset 0 0 0 ${w * 0.105}px #000`,
+                    boxShadow: `inset 0 0 0 ${w * 0.08}px #fff, inset 0 0 0 ${w * 0.105}px #000, 3px 3px 0 rgba(0,0,0,0.22)`,
                   }}
                 />
               </div>
-              {/* what the peeker sees: the actual face on the underside */}
+              {/* what the peeker sees: the face's corner on the underside */}
               <div className="card-peek-flap-side card-peek-flap-underside" style={{ color: colour }}>
                 <span
                   style={{
@@ -169,29 +197,14 @@ export function Card({
                 <span
                   style={{
                     position: 'absolute',
-                    top: '50%',
+                    bottom: -w * 0.25,
                     left: '50%',
-                    transform: 'translate(-50%, -50%)',
+                    transform: 'translateX(-50%)',
                     fontSize: w * 0.5,
                     lineHeight: 1,
                   }}
                 >
                   {GLYPH[suit]}
-                </span>
-                <span
-                  style={{
-                    position: 'absolute',
-                    bottom: w * 0.09,
-                    right: w * 0.09,
-                    transform: 'rotate(180deg)',
-                    fontFamily: 'var(--font-display)',
-                    fontWeight: 600,
-                    fontSize: w * 0.28,
-                    lineHeight: 1,
-                  }}
-                >
-                  {rank}
-                  <span style={{ fontSize: w * 0.24 }}>{GLYPH[suit]}</span>
                 </span>
               </div>
             </motion.div>

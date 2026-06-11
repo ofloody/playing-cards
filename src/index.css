@@ -339,9 +339,9 @@ body {
 .card-glow { box-shadow: 0 0 0 4px var(--color-accent-yellow); }
 /* A face-down card the viewer has seen before: a frosted "memory" of its face
    showing through the back (the x-ray used by memory games like Cabo). */
-/* The peek reveal: the whole card, rigid and uncreased, lifts off the felt
-   by its bottom edge (perspective swells the near edge) and bends back over
-   its top edge, showing the face on the underside for a private glance. */
+/* The peek reveal: the card bends at its waist, the bottom half lifting off
+   the felt (perspective swells the near edge) and folding back to show the
+   face's corner on its underside, a private glance at a real card. */
 .card-peek-hinge {
   position: absolute;
   inset: 0;
@@ -350,7 +350,10 @@ body {
 }
 .card-peek-flap {
   position: absolute;
-  inset: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 50%;
   transform-style: preserve-3d;
   transform-origin: top center;
 }
