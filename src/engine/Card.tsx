@@ -152,10 +152,27 @@ export function Card({
               className="card-peek-flap"
               initial={{ rotateX: 0, y: 0 }}
               // the slight downward nudge tucks the folded flap over the cut
-              // edge of the clipped back, so no seam peeks out beneath it
+              // edge of the clipped back, so no seam peeks out beneath it; it
+              // arrives only once the flap has folded past vertical, and on
+              // the way down it snaps flush first, so the descending flap
+              // never hangs below the card's top half with a gap between
               animate={{ rotateX: 140, y: h * 0.05 }}
-              exit={{ rotateX: 0, y: 0 }}
-              transition={{ duration: FLIP_SECONDS, ease: 'easeInOut', delay: t.delay }}
+              exit={{
+                rotateX: 0,
+                y: 0,
+                transition: {
+                  rotateX: { duration: FLIP_SECONDS, ease: 'easeInOut' },
+                  y: { duration: FLIP_SECONDS * 0.15, ease: 'easeOut' },
+                },
+              }}
+              transition={{
+                rotateX: { duration: FLIP_SECONDS, ease: 'easeInOut', delay: t.delay },
+                y: {
+                  duration: FLIP_SECONDS * 0.35,
+                  ease: 'easeOut',
+                  delay: t.delay + FLIP_SECONDS * 0.55,
+                },
+              }}
             >
               {/* what the table sees: the bottom slice of the back, lifting away */}
               <div className="card-peek-flap-side">

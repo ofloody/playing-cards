@@ -67,10 +67,13 @@ The game spread throughout the Western world, especially among young people, tow
 As the game has spread, numerous variations have developed. I will describe a typical basic version first, and list some variations at the end. As the variations are so numerous, I have tried to group them into types for easier reference.`,
   zones: [
     { id: 'deck', anchor: { x: 0.5, y: 0.5 }, layout: 'pile' },
-    { id: 'p-north', anchor: { x: 0.5, y: 0.12 }, layout: 'pile', rotate: 180, label: 'North', labelPos: 'below' },
-    { id: 'p-west', anchor: { x: 0.13, y: 0.48 }, layout: 'pile', label: 'West', labelPos: 'above' },
-    { id: 'p-east', anchor: { x: 0.87, y: 0.48 }, layout: 'pile', label: 'East', labelPos: 'above' },
-    { id: 'p-south', anchor: { x: 0.5, y: 0.8 }, layout: 'fan', gap: 0.03, label: 'You', labelPos: 'above' },
+    // Every seat wears a colour from the shared seat palette (index.css);
+    // narration paints the seat's name in it too. You are always yellow,
+    // the seat facing you cyan.
+    { id: 'p-north', anchor: { x: 0.5, y: 0.12 }, layout: 'pile', rotate: 180, label: 'North', labelPos: 'below', labelColor: 'var(--color-seat-cyan)' },
+    { id: 'p-west', anchor: { x: 0.13, y: 0.48 }, layout: 'pile', label: 'West', labelPos: 'above', labelColor: 'var(--color-seat-red)' },
+    { id: 'p-east', anchor: { x: 0.87, y: 0.48 }, layout: 'pile', label: 'East', labelPos: 'above', labelColor: 'var(--color-seat-green)' },
+    { id: 'p-south', anchor: { x: 0.5, y: 0.8 }, layout: 'fan', gap: 0.03, label: 'You', labelPos: 'above', labelColor: 'var(--color-seat-yellow)' },
     { id: 'trick', anchor: { x: 0.5, y: 0.45 }, layout: 'row', gap: 0.05 },
     { id: 'middle', anchor: { x: 0.5, y: 0.45 }, layout: 'pile' },
     { id: 'discard', anchor: { x: 0.85, y: 0.78 }, layout: 'pile', label: 'Discard', labelPos: 'below' },

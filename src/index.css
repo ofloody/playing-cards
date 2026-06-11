@@ -16,6 +16,13 @@
   --color-accent-yellow: #ffe14a;
   --color-suit-red: #f04b36;
   --color-suit-ink: #050505;
+  /* Seat palette: every game colours its seats from these four. You are
+     always yellow; the seat facing you is cyan. Games reference them as
+     labelColor: 'var(--color-seat-*)'. */
+  --color-seat-yellow: var(--color-accent-yellow);
+  --color-seat-cyan: #5fc4e7;
+  --color-seat-red: var(--color-accent-red);
+  --color-seat-green: var(--color-accent-green);
 }
 
 html, body, #root { height: 100%; }

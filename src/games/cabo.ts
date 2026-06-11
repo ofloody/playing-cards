@@ -86,7 +86,7 @@ What sets the Cabo version apart are its power cards: 7, 8, 9, 10, jack and quee
       gap: 0.012,
       label: "Diagonal",
       labelPos: "right",
-      labelColor: "#f04b36",
+      labelColor: "var(--color-seat-red)",
     },
     {
       id: "p-across",
@@ -95,7 +95,7 @@ What sets the Cabo version apart are its power cards: 7, 8, 9, 10, jack and quee
       gap: 0.012,
       label: "Across",
       labelPos: "left",
-      labelColor: "#5fc4e7",
+      labelColor: "var(--color-seat-cyan)",
     },
     {
       id: "p-side",
@@ -104,7 +104,7 @@ What sets the Cabo version apart are its power cards: 7, 8, 9, 10, jack and quee
       gap: 0.012,
       label: "Side",
       labelPos: "right",
-      labelColor: "#4ab25b",
+      labelColor: "var(--color-seat-green)",
     },
     {
       id: "p-you",
@@ -113,7 +113,7 @@ What sets the Cabo version apart are its power cards: 7, 8, 9, 10, jack and quee
       gap: 0.012,
       label: "You",
       labelPos: "left",
-      labelColor: "#ffe14a",
+      labelColor: "var(--color-seat-yellow)",
     },
     {
       id: "drawn",
